@@ -1814,3 +1814,27 @@ html[data-movimento="on"] .arraste__dedo{ animation:vai-e-volta 1.9s ease-in-out
   .fim__campo small{ font-size:.58rem; margin-bottom:.2rem; }
   .fim__credito{ margin-top:.3rem; font-size:.66rem; }
 }
+
+/* === CORRECAO FINAL CARDAPIO RESPONSIVO === */
+@media (max-width:599px){
+.cardapio{--centro-pad:18px!important;--vao-trilho:10px!important;}
+.trilho{padding-inline:var(--centro-pad)!important;scroll-padding-inline:var(--centro-pad)!important;gap:var(--vao-trilho)!important;}
+.trilho>.slide{flex:0 0 calc(100% - (var(--centro-pad) * 2))!important;width:calc(100% - (var(--centro-pad) * 2))!important;margin:0!important;scroll-snap-align:center!important;}
+.trilho>.slide:first-child{margin-left:0!important;}
+.trilho>.slide:last-child{margin-right:0!important;}
+.slide{min-width:0!important;overflow:visible!important;}
+.slide__arte{flex:0 0 48%!important;min-height:210px!important;padding:8px 0 18px!important;}
+.slide__foto{display:block!important;max-width:92%!important;max-height:92%!important;width:auto!important;height:auto!important;object-fit:contain!important;margin:auto!important;}
+.slide__nome{bottom:0!important;font-size:clamp(1.05rem,5.4vw,1.45rem)!important;line-height:1.05!important;padding:0 12px!important;}
+.slide__info{flex:1 1 auto!important;overflow:visible!important;align-items:center!important;text-align:center!important;padding:10px 16px 8px!important;}
+.slide__tags{justify-content:center!important;margin-bottom:6px!important;}
+.slide__preco{justify-content:center!important;font-size:clamp(1.65rem,8vw,2.25rem)!important;margin:0!important;}
+.slide__rotulo{margin-top:8px!important;}
+.slide__desc{text-align:center!important;margin-top:5px!important;line-height:1.35!important;}
+.slide__acoes{width:100%!important;margin-top:auto!important;padding-top:12px!important;}
+.slide--bebida .slide__arte{flex:0 0 50%!important;min-height:230px!important;padding:10px 0 22px!important;}
+.slide--bebida .slide__foto{width:auto!important;height:auto!important;max-width:54%!important;max-height:205px!important;object-fit:contain!important;}
+.slide--bebida .slide__nome{bottom:0!important;font-size:1.12rem!important;}
+.slide--bebida .slide__info{align-items:center!important;justify-content:flex-start!important;text-align:center!important;padding:10px 16px 8px!important;}
+.slide--bebida .slide__preco{justify-content:center!important;margin:0!important;}
+}
