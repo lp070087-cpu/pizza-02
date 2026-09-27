@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Leguste Pizzaria — Nova Iguaçu | Cardápio, Rodízio e Delivery</title>
+<meta name="description" content="Leguste Pizzaria, na Cerâmica em Nova Iguaçu. Mais de 40 sabores tradicionais, 3 tipos de massa, pizzas doces e o melhor rodízio da Cerâmica. Delivery para a região.">
+<meta name="theme-color" content="#0B0C0E">
+<meta name="color-scheme" content="dark">
+
+<!-- Imagem crítica da abertura: a pizza que gira -->
+<link rel="preload" as="image" href="assets/img/roda-620.webp"
+      imagesrcset="assets/img/roda-440.webp 440w, assets/img/roda-620.webp 620w, assets/img/roda-900.webp 900w"
+      imagesizes="(min-width: 1000px) 44vw, 86vw" fetchpriority="high">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<a class="pular" href="#cardapio">Pular para o cardápio</a>
+
+<!-- ===================== TOPO ===================== -->
+<header class="topo" id="topo">
+  <div class="topo__interno">
+    <a class="topo__marca" href="#inicio" aria-label="Leguste Pizzaria — início">
+      <img src="assets/img/logo-leguste.webp" alt="Logo da Leguste Pizzaria" width="46" height="46">
+      <span class="topo__nome">
+        <strong>Leguste</strong>
+        <small>Pizzaria · Nova Iguaçu</small>
+      </span>
+    </a>
+
+    <nav class="topo__nav" aria-label="Seções da apresentação">
+      <a href="#inicio">Início</a>
+      <a href="#casa">A casa</a>
+      <a href="#cardapio">Cardápio</a>
+      <a href="#rodizio">Rodízio</a>
+      <a href="#local">Onde fica</a>
+      <a href="#experiencia">Experiência</a>
+      <a href="#monte">Monte a sua</a>
+    </nav>
+
+    <button class="btn btn--pedido" type="button" data-abrir-carrinho>
+      <span class="btn__txt">Meu pedido</span>
+      <span class="btn__badge" id="topo-qtd" aria-hidden="true">0</span>
+      <span class="so-leitor" id="topo-qtd-texto">nenhum item</span>
+    </button>
+
+    <button class="topo__menu" type="button" id="btn-menu"
+            aria-expanded="false" aria-controls="topo-nav-mob" aria-label="Abrir menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <nav class="topo__nav-mob" id="topo-nav-mob" aria-label="Seções da apresentação (celular)">
+    <a href="#inicio">Início</a>
+    <a href="#casa">A casa</a>
+    <a href="#cardapio">Cardápio</a>
+    <a href="#rodizio">Rodízio</a>
+    <a href="#local">Onde fica</a>
+    <a href="#experiencia">Experiência</a>
+    <a href="#monte">Monte a sua</a>
+    <a href="#pedido">Pedido</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===================== 1. ABERTURA ===================== -->
+  <section class="tela tela--hero" id="inicio">
+    <div class="hero">
+      <div class="hero__texto">
+        <p class="rotulo">
+          <span class="rotulo__ponto"></span>
+          Cerâmica · Nova Iguaçu
+        </p>
+
+        <h1 class="hero__titulo">
+          <span class="linha">A pizza</span>
+          <span class="linha linha--destaque">da sua</span>
+          <span class="linha">noite</span>
+        </h1>
+
+        <p class="hero__sub">
+          Massa no ponto, mais de 40 sabores tradicionais e três tipos de massa.
+          Feita na casa, servida quentinha — no salão ou na sua porta.
+        </p>
+
+        <div class="hero__acoes">
+          <button class="btn btn--vermelho btn--grande" type="button" data-ir-cardapio>
+            Pedir agora
+          </button>
+          <a class="btn btn--contorno btn--grande" href="#cardapio">Ver o cardápio</a>
+        </div>
+
+        <ul class="hero__fatos" id="hero-fatos"></ul>
+      </div>
+
+      <div class="hero__pizza">
+        <div class="roda" id="roda">
+          <div class="roda__brilho" aria-hidden="true"></div>
+          <img class="roda__foto" id="roda-foto"
+               src="assets/img/roda-620.webp"
+               srcset="assets/img/roda-440.webp 440w, assets/img/roda-620.webp 620w, assets/img/roda-900.webp 900w"
+               sizes="(min-width: 1000px) 44vw, 86vw"
+               alt="Pizza de quatro queijos da Leguste vista de cima"
+               width="620" height="620" decoding="async" fetchpriority="high">
+          <span class="roda__selo" id="roda-selo">
+            <em>4</em>
+            <span>queijos<br>na roda</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <a class="hero__rolar" href="#casa">
+      <span class="hero__rolar-linha" aria-hidden="true"></span>
+      Deslize
+    </a>
+  </section>
+
+  <!-- ===================== 2. A CASA ===================== -->
+  <section class="tela tela--casa" id="casa">
+    <div class="casa">
+      <div class="casa__texto">
+        <p class="rotulo"><span class="rotulo__ponto"></span>A casa</p>
+        <h2 class="titulo">
+          Forno quente,<br>mesa cheia
+        </h2>
+        <p class="texto">
+          A Leguste nasceu na Cerâmica e virou ponto de encontro de Nova Iguaçu.
+          Salão climatizado, mesas para a família toda e a pizza saindo direto do forno.
+        </p>
+
+        <blockquote class="casa__citacao">
+          “A melhor pizzaria de Nova Iguaçu”
+          <cite>Avaliação da casa no Google</cite>
+        </blockquote>
+      </div>
+
+      <!-- AS FOTOS SAO A OUTRA METADE DA COMPOSICAO.
+           Elas ficavam DENTRO de `.casa__texto`, e `.casa` declara DUAS
+           colunas: a segunda (1.05fr) nunca tinha filho nenhum. Era esse o
+           "lado direito vazio" — nao faltava imagem, faltava a imagem estar
+           no lugar. Agora sao um bloco proprio, grande, que constroi a
+           composicao em vez de decorar a coluna do texto.                    -->
+      <div class="casa__fotos">
+        <figure class="casa__fig casa__fig--principal">
+          <img src="assets/img/ambiente-fatia.webp" alt="Fatia de pizza com o queijo puxando" loading="lazy" decoding="async" width="900" height="1773">
+        </figure>
+        <figure class="casa__fig casa__fig--forno">
+          <img src="assets/img/ambiente-forno-fogo.webp" alt="Forno a lenha aceso com a pizza assando" loading="lazy" decoding="async" width="1200" height="675">
+        </figure>
+        <figure class="casa__fig casa__fig--salao">
+          <img src="assets/img/ambiente-salao.webp" alt="Salão da Leguste com as mesas arrumadas" loading="lazy" decoding="async" width="880" height="1100">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 3. CARDÁPIO HORIZONTAL ===================== -->
+  <section class="tela tela--cardapio" id="cardapio">
+    <div class="cardapio">
+      <header class="cardapio__cabeca">
+        <div class="cardapio__cabeca-txt">
+          <p class="rotulo"><span class="rotulo__ponto"></span>Cardápio</p>
+          <h2 class="titulo titulo--menor">Passe para o lado</h2>
+        </div>
+
+        <div class="filtros" id="filtros" role="group" aria-label="Filtrar o cardápio"></div>
+      </header>
+
+      <!-- Trilho horizontal: cada sabor é um slide inteiro -->
+      <div class="trilho" id="trilho" tabindex="0" role="region"
+           aria-label="Sabores da Leguste. Use as setas do teclado para navegar.">
+        <!-- os slides são montados pelo app.js a partir de assets/js/menu.js -->
+      </div>
+
+      <div class="controles">
+        <button class="seta" type="button" data-dir="-1" aria-label="Sabor anterior">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="pontos" id="pontos" aria-hidden="true"></div>
+
+        <button class="seta" type="button" data-dir="1" aria-label="Próximo sabor">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <p class="arraste" id="arraste">
+        <span class="arraste__dedo" aria-hidden="true">→</span>
+        Arraste para o lado
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== 4. RODÍZIO ===================== -->
+  <section class="tela tela--rodizio" id="rodizio">
+    <div class="rodizio">
+      <figure class="rodizio__arte">
+        <img src="assets/img/poster-rodizio.webp"
+             alt="Cartaz oficial do rodízio da Leguste Pizzaria"
+             loading="lazy" decoding="async" width="740" height="892">
+      </figure>
+
+      <div class="rodizio__texto">
+        <p class="rotulo"><span class="rotulo__ponto"></span>Rodízio</p>
+        <h2 class="titulo" id="titulo-rodizio"></h2>
+        <p class="texto">
+          Pizzas salgadas e doces à vontade, na mesa, sem pressa.
+          É o rodízio que a Cerâmica escolheu — e a casa serve todos os dias.
+        </p>
+
+        <ul class="rodizio__lista" id="rodizio-lista"></ul>
+
+        <p class="rodizio__obs" id="rodizio-obs"></p>
+
+        <div class="rodizio__acoes">
+          <a class="btn btn--verde btn--grande" id="rodizio-zap"
+             href="https://wa.me/5521992543326" target="_blank" rel="noopener">
+            Reservar pelo WhatsApp
+          </a>
+          <a class="btn btn--contorno" href="#local">Como chegar</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 5. ONDE FICA ===================== -->
+  <section class="tela tela--local" id="local">
+    <div class="local">
+      <div class="local__texto">
+        <p class="rotulo"><span class="rotulo__ponto"></span>Onde fica</p>
+        <h2 class="titulo">Venha nos visitar</h2>
+
+        <address class="local__end">
+          <strong id="local-rua"></strong>
+          <span id="local-bairro"></span>
+        </address>
+
+        <div class="local__fones">
+          <a class="local__fone" id="local-tel1" href="#">
+            <span class="local__fone-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4h2.2c.7 0 1.3.5 1.5 1.2l.8 3c.1.6-.1 1.2-.6 1.5l-1.3.9a12 12 0 006.3 6.3l.9-1.3c.4-.5 1-.7 1.6-.6l3 .8c.7.2 1.2.8 1.2 1.5v2.2c0 .8-.7 1.5-1.5 1.5A15.5 15.5 0 014 5.5z" fill="currentColor"/></svg>
+            </span>
+            <span class="local__fone-txt"><small>Telefone e WhatsApp</small><strong id="local-tel1-txt"></strong></span>
+          </a>
+          <a class="local__fone" id="local-tel2" href="#">
+            <span class="local__fone-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4h2.2c.7 0 1.3.5 1.5 1.2l.8 3c.1.6-.1 1.2-.6 1.5l-1.3.9a12 12 0 006.3 6.3l.9-1.3c.4-.5 1-.7 1.6-.6l3 .8c.7.2 1.2.8 1.2 1.5v2.2c0 .8-.7 1.5-1.5 1.5A15.5 15.5 0 014 5.5z" fill="currentColor"/></svg>
+            </span>
+            <span class="local__fone-txt"><small>Segundo telefone</small><strong id="local-tel2-txt"></strong></span>
+          </a>
+        </div>
+
+        <div class="local__entrega">
+          <p class="local__selo" id="local-entrega"></p>
+          <p class="texto texto--pequeno" id="local-tempo"></p>
+          <p class="texto texto--pequeno" id="local-apps"></p>
+        </div>
+
+        <div class="local__acoes">
+          <a class="btn btn--vermelho" id="local-mapa" href="#" target="_blank" rel="noopener">Abrir no mapa</a>
+          <a class="btn btn--contorno" id="local-insta" href="#" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+
+      <div class="local__mapa" aria-hidden="true">
+        <div class="local__pino">
+          <span class="local__pino-pulso"></span>
+          <span class="local__pino-ponto"></span>
+        </div>
+        <p class="local__mapa-txt">Cerâmica<br><span>Nova Iguaçu · RJ</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. EXPERIÊNCIA LEGUSTE (fundo claro) ============
+       Tela nova, pedida no briefing: um respiro CLARO entre o "onde fica" e o
+       fechamento. Nada de informação nova inventada — só o que a casa já diz,
+       organizado em três momentos da noite. -->
+  <section class="tela tela--clara tela--experiencia" id="experiencia">
+    <div class="expe">
+      <header class="expe__cabeca">
+        <p class="rotulo rotulo--escuro"><span class="rotulo__ponto"></span>Experiência Leguste</p>
+        <h2 class="titulo titulo--escuro">Do forno<br>para a mesa</h2>
+        <p class="texto texto--escuro expe__linha">
+          A noite na Leguste tem um ritmo. Do primeiro cheiro de lenha queimando
+          até a última fatia doce, tudo acontece na mesma mesa.
+        </p>
+      </header>
+
+      <ol class="expe__passos">
+        <li class="expe__passo">
+          <span class="expe__num">01</span>
+          <h3 class="expe__nome">A lenha acende</h3>
+          <p class="expe__txt">O forno pega fogo cedo e fica no ponto a noite inteira.</p>
+        </li>
+        <li class="expe__passo">
+          <span class="expe__num">02</span>
+          <h3 class="expe__nome">A massa descansa</h3>
+          <p class="expe__txt">Massa de fermentação lenta, aberta na hora do pedido.</p>
+        </li>
+        <li class="expe__passo">
+          <span class="expe__num">03</span>
+          <h3 class="expe__nome">A mesa enche</h3>
+          <p class="expe__txt">Salão climatizado, mesa grande e pizza no centro.</p>
+        </li>
+      </ol>
+
+      <figure class="expe__foto">
+        <img src="assets/img/ambiente-forno-fogo.webp"
+             alt="Forno a lenha aceso com a pizza assando" loading="lazy" decoding="async" width="1200" height="675">
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ 7. PEÇA DO SEU JEITO (fundo claro) ============
+       Tela nova: explica os TRÊS TIPOS DE MASSA que a casa informa
+       ("3 tipos de massa" está no material oficial). Nomes, descrições e
+       acréscimos são os MESMOS que o modal do produto já usa, lidos do
+       menu.js — esta tela não acrescenta nenhum dado comercial novo. -->
+  <section class="tela tela--clara tela--monte" id="monte">
+    <div class="monte">
+      <header class="monte__cabeca">
+        <p class="rotulo rotulo--escuro"><span class="rotulo__ponto"></span>Peça do seu jeito</p>
+        <h2 class="titulo titulo--escuro">Escolha<br>a massa</h2>
+        <p class="texto texto--escuro monte__linha">
+          Todo sabor do cardápio sai em três massas. O preço mostrado no cardápio
+          é o da tradicional — as outras duas entram como acréscimo, e é só
+          escolher na hora de montar o pedido.
+        </p>
+      </header>
+
+      <ul class="monte__massas" id="monte-massas"></ul>
+
+      <div class="monte__acoes">
+        <button class="btn btn--vermelho btn--grande" type="button" data-ir-cardapio>Ir para o cardápio</button>
+        <a class="btn btn--contorno btn--contorno-escuro btn--grande" id="monte-zap"
+           href="https://wa.me/5521992543326" target="_blank" rel="noopener">Tirar dúvida no WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 8. FECHAMENTO ===================== -->
+  <footer class="tela tela--clara tela--fim" id="pedido">
+    <div class="fim">
+      <!-- A PIZZA PARTICIPA DA COMPOSICAO, como na abertura. Flutua no fundo
+           claro: o recorte e o mesmo do cardapio, sem moldura nenhuma.      -->
+      <figure class="fim__pizza" aria-hidden="true">
+        <img src="assets/img/pz-maracana-cut-900.webp" alt="" loading="lazy" decoding="async" width="900" height="675">
+      </figure>
+
+      <div class="fim__texto">
+        <img class="fim__logo" src="assets/img/logo-leguste.webp" alt="" width="86" height="86" loading="lazy" decoding="async">
+        <h2 class="fim__titulo">Bateu<br>a fome?</h2>
+        <p class="fim__sub">Monte seu pedido aqui e envie direto para a Leguste pelo WhatsApp.</p>
+
+        <div class="fim__acoes">
+          <button class="btn btn--vermelho btn--grande" type="button" data-ir-cardapio>Escolher minha pizza</button>
+          <button class="btn btn--contorno btn--contorno-escuro btn--grande" type="button" data-abrir-carrinho>Ver meu pedido</button>
+        </div>
+      </div>
+
+      <!-- as informacoes da loja DISTRIBUIDAS em tres colunas, em vez de um
+           bloco de texto perdido no meio do vazio -->
+      <div class="fim__dados">
+        <div class="fim__campo">
+          <small>Endereço</small>
+          <p><strong id="fim-rua"></strong><br><span id="fim-bairro"></span></p>
+        </div>
+        <div class="fim__campo">
+          <small>Contato</small>
+          <p id="fim-fones"></p>
+        </div>
+        <div class="fim__campo">
+          <small>Acompanhe</small>
+          <p id="fim-insta"></p>
+        </div>
+      </div>
+
+      <p class="fim__credito">
+        Apresentação digital desenvolvida por <strong>Unitrix</strong>.
+        Imagens e informações da própria Leguste Pizzaria.
+      </p>
+    </div>
+  </footer>
+
+</main>
+
+<!-- ===================== CARRINHO ===================== -->
+<aside class="carrinho" id="carrinho" aria-labelledby="carrinho-titulo" aria-hidden="true">
+  <div class="carrinho__veu" data-fechar-carrinho></div>
+
+  <div class="carrinho__caixa">
+    <header class="carrinho__cabeca">
+      <h2 id="carrinho-titulo">Seu pedido</h2>
+      <button class="carrinho__x" type="button" data-fechar-carrinho aria-label="Fechar o pedido">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <div class="carrinho__corpo" id="carrinho-corpo">
+      <p class="carrinho__vazio" id="carrinho-vazio">
+        Seu pedido está vazio.<br>
+        <span>Escolha um sabor no cardápio.</span>
+      </p>
+      <ul class="carrinho__lista" id="carrinho-lista"></ul>
+    </div>
+
+    <footer class="carrinho__pe">
+      <div class="carrinho__linha">
+        <span>Subtotal</span>
+        <strong id="carrinho-sub">R$ 0,00</strong>
+      </div>
+      <p class="carrinho__nota" id="carrinho-nota"></p>
+      <button class="btn btn--verde btn--largo" type="button" id="carrinho-finalizar" disabled>
+        Finalizar pelo WhatsApp
+      </button>
+      <button class="carrinho__limpar" type="button" id="carrinho-limpar">Limpar pedido</button>
+    </footer>
+  </div>
+</aside>
+
+<!-- ===================== BARRA FIXA (CELULAR) ===================== -->
+<div class="barra" id="barra" hidden>
+  <button class="barra__bt" type="button" data-abrir-carrinho>
+    <span class="barra__ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M4 5h2.2l2.3 9.4a2 2 0 002 1.6h7.1a2 2 0 002-1.5L21 8H7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10.5" cy="19.5" r="1.4" fill="currentColor"/><circle cx="18" cy="19.5" r="1.4" fill="currentColor"/></svg>
+    </span>
+    <span class="barra__txt">Ver pedido</span>
+    <span class="barra__qtd" id="barra-qtd">0</span>
+  </button>
+  <strong class="barra__total" id="barra-sub">R$ 0,00</strong>
+</div>
+
+<!-- ===================== MODAL DO PRODUTO ===================== -->
+<div class="modal" id="modal" hidden>
+  <div class="modal__veu" data-fechar-modal></div>
+
+  <div class="modal__caixa" role="dialog" aria-modal="true" aria-labelledby="modal-nome">
+    <button class="modal__x" type="button" data-fechar-modal aria-label="Fechar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="modal__topo">
+      <div class="modal__foto">
+        <img id="modal-img" src="" alt="" width="300" height="300" decoding="async">
+      </div>
+      <div class="modal__topo-txt">
+        <h3 id="modal-nome"></h3>
+        <p class="modal__preco" id="modal-preco"></p>
+        <p class="modal__desc" id="modal-desc"></p>
+      </div>
+    </div>
+
+    <div class="modal__corpo">
+      <fieldset class="modal__bloco" id="modal-bloco-tamanho">
+        <legend>Tamanho</legend>
+        <div class="tamanhos" id="modal-tamanhos"></div>
+      </fieldset>
+
+      <fieldset class="modal__bloco" id="modal-bloco-massa">
+        <legend>Massa</legend>
+        <div class="tamanhos" id="modal-massas"></div>
+      </fieldset>
+
+      <label class="modal__bloco modal__bloco--obs" for="modal-obs">
+        <span class="modal__rotulo">Alguma observação?</span>
+        <textarea id="modal-obs" rows="2" maxlength="180"
+                  placeholder="Ex.: sem cebola, bem assada, cortar em 8..."></textarea>
+      </label>
+    </div>
+
+    <div class="modal__pe">
+      <div class="qtd" role="group" aria-label="Quantidade">
+        <button type="button" data-qtd="-1" aria-label="Diminuir quantidade">−</button>
+        <span id="modal-qtd" aria-live="polite">1</span>
+        <button type="button" data-qtd="1" aria-label="Aumentar quantidade">+</button>
+      </div>
+      <button class="btn btn--verde modal__add" type="button" id="modal-add">
+        Adicionar · <span id="modal-total">R$ 0,00</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- aviso acessível: nenhum toast na tela (não cobre a barra fixa) -->
+<p class="so-leitor" id="aviso" aria-live="polite" role="status"></p>
+
+<noscript>
+  <p style="padding:2rem;text-align:center">
+    Ative o JavaScript para ver o cardápio completo e montar seu pedido.
+    Você também pode falar direto com a Leguste pelo telefone (21) 99254-3326.
+  </p>
+</noscript>
+
+<script src="assets/js/menu.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

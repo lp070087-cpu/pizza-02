@@ -1,0 +1,1816 @@
+/* =========================================================================
+   LEGUSTE PIZZARIA — apresentação 02
+   Experiência visual em telas cheias + cardápio horizontal.
+
+   REGRA DE IDENTIDADE: esta folha de estilo é exclusiva desta pasta.
+   Nada aqui se aplica à pasta `apresentacao/` (apresentação 01).
+   ========================================================================= */
+
+/* ============================ 1. BASE ============================ */
+:root{
+  /* Paleta Leguste */
+  --preto:      #0B0C0E;
+  --carvao:     #121316;
+  --carvao-2:   #1B1D21;
+  --grafite:    #2A2D33;
+  --vermelho:   #C4141F;
+  --vermelho-e: #8E0A14;
+  --verde:      #12813F;
+  --verde-e:    #0A5329;
+  --verde-claro:#3FD07A;
+  --dourado:    #E3A72F;
+  --dourado-e:  #A87415;
+  --branco:     #FFFFFF;
+  --osso:       #F4EFE7;
+  --texto:      #EEEDEA;
+  --texto-2:    #A9ADB5;
+  --texto-3:    #767B84;
+
+  /* Tipografia */
+  --display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --corpo:   'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Medidas */
+  --topo-h: 62px;
+  --raio:   16px;
+  --raio-g: 26px;
+  --sombra: 0 18px 46px rgba(0,0,0,.45);
+  --sombra-forte: 0 30px 70px rgba(0,0,0,.6);
+
+  /* Movimento */
+  --curva: cubic-bezier(.16,.84,.24,1);
+  --curva-suave: cubic-bezier(.33,0,.2,1);
+
+  /* Coreografia da abertura (reduzida no fim do arquivo, se pedido) */
+  --t-entrada: 1750ms;
+  --t-ambiente: 96s;
+  --atraso-ambiente: 2500ms;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+
+html{
+  -webkit-text-size-adjust:100%;   /* nunca bloqueia o zoom do navegador */
+  height:100%;
+}
+
+body{
+  margin:0;
+  height:100%;
+  overflow:hidden;                  /* quem rola é o <main> */
+  background:var(--preto);
+  color:var(--texto);
+  font-family:var(--corpo);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overscroll-behavior-y:none;
+}
+
+img{ max-width:100%; display:block; height:auto; }
+button{ font:inherit; color:inherit; }
+a{ color:inherit; text-decoration:none; }
+h1,h2,h3,p,ul,ol,figure,blockquote,address,fieldset{ margin:0; }
+ul,ol{ list-style:none; padding:0; }
+fieldset{ border:0; padding:0; }
+address{ font-style:normal; }
+strong{ font-weight:800; }
+
+:focus-visible{
+  outline:3px solid var(--dourado);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+.so-leitor{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+  overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+}
+
+.pular{
+  position:fixed; top:-100px; left:12px; z-index:400;
+  background:var(--dourado); color:var(--preto);
+  padding:.7rem 1.1rem; border-radius:0 0 12px 12px; font-weight:800;
+  transition:top .2s;
+}
+.pular:focus{ top:0; }
+
+/* ==================== 2. ROLAGEM EM TELAS CHEIAS ====================
+   Cada seção é uma tela. O encaixe é "proximity" de propósito: encaixa
+   quando o gesto termina perto do topo, mas NUNCA prende o usuário —
+   importante em telas onde uma seção é mais alta que o visor.          */
+main{
+  height:100dvh;
+  height:100vh;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scroll-snap-type:y proximity;
+  overscroll-behavior-y:contain;
+  scroll-padding-top:var(--topo-h);
+  -webkit-overflow-scrolling:touch;
+}
+@supports (height:100dvh){ main{ height:100dvh; } }
+
+.tela{
+  position:relative;
+  min-height:100dvh;
+  scroll-snap-align:start;
+  scroll-margin-top:var(--topo-h);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:calc(var(--topo-h) + 14px) clamp(16px,4.4vw,64px) clamp(26px,5vw,56px);
+}
+.tela--hero{ justify-content:center; }
+.tela--cardapio{
+  padding-left:0;
+  padding-right:0;
+  /* A altura do bloco e "visor - topo - 22px", mas `.tela` somava o padding
+     vertical dela POR FORA: o cardapio terminava abaixo do visor em toda
+     largura (18px no celular, ~50px no desktop) e a tela nunca assentava no
+     encaixe. A secao passa a usar exatamente a altura que a conta ja supoe:
+     o topo livra o cabecalho fixo, o fundo nao soma nada.                    */
+  padding-top:var(--topo-h);
+  padding-bottom:0;
+  /* com `center` (o padrao de .tela) o bloco de 100dvh-topo seria centrado na
+     tela e subiria por baixo do cabecalho fixo. Aqui ele comeca depois dele. */
+  justify-content:flex-start;
+}
+
+/* ============================ 3. TIPOS ============================ */
+.rotulo{
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-size:.7rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--dourado); margin-bottom:.7rem;
+}
+.rotulo__ponto{
+  width:7px; height:7px; border-radius:50%;
+  background:var(--vermelho); box-shadow:0 0 0 3px rgba(196,20,31,.22);
+  animation:pulso-ponto 2.6s var(--curva-suave) infinite;
+}
+@keyframes pulso-ponto{
+  0%,100%{ transform:scale(1); opacity:1 }
+  50%    { transform:scale(.72); opacity:.62 }
+}
+
+.titulo{
+  font-family:var(--display);
+  font-weight:400;
+  font-size:clamp(2rem,7.4vw,3.5rem);
+  line-height:.96;
+  letter-spacing:.005em;
+  text-transform:uppercase;
+  color:var(--branco);
+}
+.titulo--menor{ font-size:clamp(1.5rem,5.4vw,2.5rem); }
+
+.texto{ color:var(--texto-2); max-width:56ch; }
+.texto--pequeno{ font-size:.86rem; }
+
+/* ============================ 4. BOTÕES ============================ */
+.btn{
+  --bg:var(--carvao-2); --fg:var(--branco); --bd:transparent;
+  display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+  position:relative;
+  min-height:48px;                 /* alvo de toque confortável */
+  padding:.82rem 1.35rem;
+  border:1.5px solid var(--bd);
+  border-radius:999px;
+  background:var(--bg); color:var(--fg);
+  font-weight:800; font-size:.92rem; letter-spacing:.01em;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:transform .22s var(--curva), background-color .22s, box-shadow .22s, border-color .22s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:active{ transform:scale(.965); }
+
+.btn--vermelho{ --bg:var(--vermelho); --fg:var(--branco); box-shadow:0 10px 26px rgba(196,20,31,.32); }
+.btn--verde   { --bg:var(--verde);    --fg:var(--branco); box-shadow:0 10px 26px rgba(18,129,63,.3); }
+.btn--contorno{ --bg:transparent; --fg:var(--branco); --bd:rgba(255,255,255,.32); }
+.btn--grande  { min-height:54px; padding:1rem 1.7rem; font-size:1rem; }
+.btn--largo   { width:100%; }
+.btn[disabled]{ opacity:.45; cursor:not-allowed; box-shadow:none; }
+
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{ transform:translateY(-2px); }
+  .btn--vermelho:hover{ --bg:#DC1826; box-shadow:0 16px 34px rgba(196,20,31,.42); }
+  .btn--verde:hover   { --bg:#17A050; box-shadow:0 16px 34px rgba(18,129,63,.4); }
+  .btn--contorno:hover{ --bd:rgba(255,255,255,.7); --bg:rgba(255,255,255,.08); }
+}
+
+/* ============================ 5. TOPO ============================ */
+.topo{
+  position:fixed; inset:0 0 auto 0; z-index:120;
+  background:linear-gradient(180deg, rgba(11,12,14,.96), rgba(11,12,14,.72) 70%, transparent);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.topo__interno{
+  height:var(--topo-h);
+  display:flex; align-items:center; gap:.7rem;
+  padding:0 clamp(14px,4vw,52px);
+}
+.topo__marca{ display:flex; align-items:center; gap:.62rem; margin-right:auto; min-width:0; }
+.topo__marca img{ width:44px; height:44px; object-fit:contain; border-radius:50%; flex:none; }
+.topo__nome{ display:flex; flex-direction:column; line-height:1.06; min-width:0; }
+.topo__nome strong{
+  font-family:var(--display); font-weight:400;
+  font-size:1.16rem; letter-spacing:.03em; text-transform:uppercase; color:var(--branco);
+}
+.topo__nome small{ font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--texto-3); }
+
+.topo__nav{ display:none; gap:.3rem; }
+.topo__nav a{
+  padding:.5rem .68rem; border-radius:999px; white-space:nowrap;
+  font-size:.84rem; font-weight:700; color:var(--texto-2);
+  transition:color .2s, background-color .2s;
+}
+.topo__nav a:hover{ color:var(--branco); background:rgba(255,255,255,.07); }
+
+.btn--pedido{
+  --bg:rgba(255,255,255,.08); --fg:var(--branco); --bd:rgba(255,255,255,.16);
+  min-height:44px; padding:.55rem .95rem; font-size:.85rem;
+}
+.btn__badge{
+  min-width:22px; height:22px; padding:0 6px;
+  display:inline-grid; place-items:center;
+  border-radius:999px; background:var(--vermelho);
+  font-size:.72rem; font-weight:800;
+}
+.btn__badge[data-vazio="1"]{ background:var(--grafite); color:var(--texto-3); }
+
+.topo__menu{
+  width:44px; height:44px; flex:none;
+  display:grid; place-items:center; gap:5px;
+  background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.16);
+  border-radius:12px; cursor:pointer;
+}
+.topo__menu span{
+  display:block; width:18px; height:2px; border-radius:2px; background:var(--branco);
+  transition:transform .28s var(--curva), opacity .2s;
+}
+.topo__menu[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.topo__menu[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.topo__menu[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+.topo__nav-mob{
+  display:grid; gap:.15rem;
+  padding:0 clamp(14px,4vw,52px);
+  max-height:0; overflow:hidden;
+  transition:max-height .34s var(--curva), padding-bottom .34s var(--curva);
+}
+.topo__nav-mob.esta-aberto{ max-height:340px; padding-bottom:1rem; }
+.topo__nav-mob a{
+  padding:.72rem .3rem; font-weight:700; color:var(--texto-2);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.topo__nav-mob a:active{ color:var(--branco); }
+
+/* ======================== 6. ABERTURA / HERO ======================== */
+.tela--hero{ padding-bottom:clamp(64px,10vh,96px); }
+
+.hero{
+  width:100%;
+  display:flex; flex-direction:column-reverse;
+  gap:clamp(6px,2vh,22px);
+  align-items:center;
+}
+
+.hero__texto{ width:100%; text-align:center; }
+.hero__titulo{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(2.5rem,12.4vw,5.6rem);
+  line-height:.9; letter-spacing:.004em;
+  color:var(--branco);
+}
+.hero__titulo .linha{ display:block; }
+.hero__titulo .linha--destaque{
+  color:var(--dourado);
+  text-shadow:0 6px 30px rgba(227,167,47,.28);
+}
+.hero__sub{
+  margin:.9rem auto 0;
+  max-width:44ch;
+  color:var(--texto-2);
+  font-size:clamp(.9rem,2.6vw,1.06rem);
+}
+.hero__acoes{
+  margin-top:1.25rem;
+  display:flex; flex-wrap:wrap; gap:.6rem; justify-content:center;
+}
+.hero__acoes .btn{ flex:1 1 auto; min-width:150px; max-width:250px; }
+.hero__fatos{
+  margin-top:1.4rem;
+  display:flex; gap:clamp(.9rem,4vw,2.6rem); justify-content:center; flex-wrap:wrap;
+}
+.hero__fatos li{ display:flex; flex-direction:column; gap:.05rem; }
+.hero__fatos b{
+  font-family:var(--display); font-weight:400; color:var(--branco);
+  font-size:clamp(1.35rem,4.6vw,1.9rem); line-height:1;
+}
+.hero__fatos span{
+  font-size:.62rem; letter-spacing:.13em; text-transform:uppercase; color:var(--texto-3);
+}
+
+/* ---- A pizza que gira ---- */
+.hero__pizza{
+  width:100%;
+  display:flex; align-items:center; justify-content:center;
+  flex:none;
+}
+.roda{
+  position:relative;
+  width:min(86vw, 44vh);
+  aspect-ratio:1;
+  display:grid; place-items:center;
+  /* a entrada acontece AQUI: a caixa entra girando e crescendo */
+  animation:roda-entra var(--t-entrada) var(--curva) .1s both;
+}
+.roda__brilho{
+  position:absolute; inset:-16%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(227,167,47,.30), rgba(227,167,47,.09) 44%, transparent 68%),
+    radial-gradient(circle at 50% 50%, rgba(196,20,31,.22), transparent 66%);
+  animation:brilho-respira 7.5s var(--curva-suave) infinite 1.9s;
+}
+.roda__foto{
+  position:relative;
+  width:100%; height:100%;
+  object-fit:contain;
+  /* A foto é um disco de verdade (alpha real), então girar mantém a pizza
+     redonda o tempo todo. Sem filtro aqui: filtro em elemento girando
+     repinta o quadro a cada frame e derruba o desempenho.               */
+  animation:roda-gira var(--t-ambiente) linear infinite var(--atraso-ambiente);
+  will-change:transform;
+}
+.roda__selo{
+  position:absolute; right:2%; bottom:8%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  width:clamp(66px,19vw,88px); aspect-ratio:1; border-radius:50%;
+  background:var(--carvao); border:2px solid var(--dourado);
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
+  text-align:center; line-height:1;
+  animation:surgir .7s var(--curva) 1.5s both;
+}
+.roda__selo em{
+  font-family:var(--display); font-style:normal; color:var(--dourado);
+  font-size:clamp(1.35rem,4.4vw,1.8rem); line-height:1;
+}
+.roda__selo span{ font-size:.52rem; letter-spacing:.08em; text-transform:uppercase; color:var(--texto-2); }
+
+@keyframes roda-entra{
+  0%  { opacity:0;   transform:scale(.5) rotate(-165deg); }
+  42% { opacity:1; }
+  100%{ opacity:1;   transform:scale(1)  rotate(0deg); }
+}
+@keyframes roda-gira{ from{ transform:rotate(0deg) } to{ transform:rotate(360deg) } }
+@keyframes brilho-respira{
+  0%,100%{ transform:scale(1);    opacity:.86 }
+  50%    { transform:scale(1.06); opacity:1 }
+}
+@keyframes surgir{ from{ opacity:0; transform:translateY(14px) } to{ opacity:1; transform:none } }
+
+/* Entrada escalonada dos textos */
+.hero__texto > *{ animation:surgir .8s var(--curva) both; }
+.hero__texto > *:nth-child(1){ animation-delay:.28s }
+.hero__texto > *:nth-child(2){ animation-delay:.40s }
+.hero__texto > *:nth-child(3){ animation-delay:.52s }
+.hero__texto > *:nth-child(4){ animation-delay:.64s }
+.hero__texto > *:nth-child(5){ animation-delay:.76s }
+
+/* pausa a roda quando ela sai da tela (economia real de bateria) */
+.roda.esta-parada .roda__foto,
+.roda.esta-parada .roda__brilho{ animation-play-state:paused; }
+
+.hero__rolar{
+  position:absolute; left:50%; bottom:12px; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:.35rem;
+  font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--texto-3);
+}
+.hero__rolar-linha{
+  width:1px; height:26px;
+  background:linear-gradient(180deg, transparent, var(--dourado));
+  animation:desce .7s var(--curva) 1.9s both, flutua 2.3s ease-in-out 2.6s infinite;
+}
+@keyframes desce{ from{ opacity:0; transform:scaleY(0) } to{ opacity:1; transform:scaleY(1) } }
+@keyframes flutua{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(5px) } }
+
+/* ============================ 7. A CASA ============================
+   Composicao editorial, nao "galeria num canto": a coluna de texto carrega
+   titulo, texto e citacao; a outra metade e ocupada por FOTOGRAFIA grande —
+   uma imagem principal que atravessa as duas linhas e duas menores que se
+   desencontram de proposito. As fotos nao vivem mais dentro do texto.   */
+.casa{ width:100%; display:grid; gap:clamp(1.2rem,3.4vw,2.6rem); align-items:center; }
+.casa__citacao{
+  margin-top:1.1rem; padding:.85rem 0 .85rem 1rem;
+  border-left:3px solid var(--dourado);
+  font-size:1.02rem; font-weight:700; color:var(--branco);
+}
+.casa__citacao cite{
+  display:block; margin-top:.35rem;
+  font-size:.68rem; font-weight:700; font-style:normal;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--texto-3);
+}
+.casa__fotos{
+  display:grid; gap:clamp(.4rem,1.1vw,.7rem);
+  grid-template-columns:1fr 1fr;
+  grid-template-areas:"principal forno" "principal salao";
+}
+.casa__fig{ position:relative; overflow:hidden; border-radius:var(--raio); background:var(--carvao); }
+.casa__fig img{ width:100%; height:100%; object-fit:cover; display:block; }
+.casa__fig--principal{ grid-area:principal; aspect-ratio:auto; min-height:100%; }
+.casa__fig--forno{ grid-area:forno; aspect-ratio:4/3; }
+.casa__fig--salao{ grid-area:salao; aspect-ratio:4/3; }
+/* O detalhe grafico discreto que o brief pede: um fio dourado na EMENDA entre
+   a foto principal e as duas menores. Ele mora na propria figura principal —
+   assim fica exatamente na divisoria, qualquer que seja a fracao das colunas.
+   Escrito como `left:50%` da colagem ele cairia DENTRO da foto grande (a
+   divisoria esta em ~59%), ou seja: um risco por cima da imagem.            */
+.casa__fig--principal::after{
+  content:''; position:absolute; z-index:2; pointer-events:none;
+  top:10%; bottom:10%; right:0; width:1px;
+  background:linear-gradient(180deg, transparent, rgba(227,167,47,.5), transparent);
+}
+
+@media (max-width:599px){
+  /* no celular a coluna unica nao tem "lado vazio": a foto principal fica
+     mais alta e as duas menores dividem a linha de baixo */
+  .casa__fig--principal{ aspect-ratio:4/5; min-height:0; }
+  .casa__fig--forno, .casa__fig--salao{ aspect-ratio:1; }
+}
+
+/* ===================== 8. CARDÁPIO HORIZONTAL ===================== */
+.cardapio{
+  --slide-pad:clamp(16px,4.4vw,64px);
+  --centro-pad:0px;          /* de onde o vizinho espia (padding do trilho) */
+  --vao-trilho:12px;         /* respiro entre um produto e o proximo */
+  width:100%;
+  height:calc(100dvh - var(--topo-h) - 22px);
+  height:calc(100vh - var(--topo-h) - 22px);
+  display:flex; flex-direction:column;
+  min-height:0;
+}
+/* O produto fica CENTRADO na tela com o vizinho aparecendo dos dois lados: e
+   esse vao que comunica "passe para o lado". O trilho rola na largura cheia
+   (uma tela por vez, encaixe certo); o produto do meio ocupa a largura do
+   trilho MENOS este vao, que e aplicado por dentro com `scroll-padding` igual
+   ao padding — o mesmo numero que o app.js le do CSS ao rolar. A fatia do
+   vizinho que aparece e `--centro-pad` menos `--vao-trilho`, dos DOIS lados. */
+@media (max-width:599px){
+  .cardapio{ --centro-pad:clamp(22px,7vw,36px); --vao-trilho:10px; }
+}
+@media (min-width:600px){ .cardapio{ --centro-pad:clamp(20px,3vw,44px); } }
+@supports (height:100dvh){
+  .cardapio{ height:calc(100dvh - var(--topo-h) - 22px); }
+}
+
+.cardapio__cabeca{
+  flex:0 0 auto;
+  display:flex; flex-direction:column; gap:.6rem;
+  padding:0 clamp(16px,4.4vw,64px);
+  margin-bottom:.5rem;
+}
+.cardapio__cabeca-txt{ display:flex; flex-direction:column; }
+
+.filtros{
+  display:flex; gap:.4rem; overflow-x:auto; padding-bottom:.2rem;
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+.filtros::-webkit-scrollbar{ display:none; }
+.filtro{
+  flex:none; min-height:38px; padding:.42rem 1rem;
+  border-radius:999px; border:1.5px solid rgba(255,255,255,.16);
+  background:transparent; color:var(--texto-2);
+  font-size:.8rem; font-weight:800; cursor:pointer;
+  transition:background-color .22s, color .22s, border-color .22s;
+  -webkit-tap-highlight-color:transparent;
+}
+.filtro[aria-pressed="true"]{
+  background:var(--branco); border-color:var(--branco); color:var(--preto);
+}
+
+/* --- trilho horizontal --- */
+.trilho{
+  flex:1 1 auto; min-height:0;
+  display:flex;
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  scrollbar-width:none; -ms-overflow-style:none;
+  overscroll-behavior-x:contain;
+  touch-action:pan-x pan-y;         /* swipe lateral sem travar o scroll da página */
+  -webkit-overflow-scrolling:touch;
+  /* o vao por onde o vizinho espia. Precisa de padding de verdade: so
+     `scroll-padding` nao cria o espaco de onde o vizinho aparece.          */
+  padding-inline:var(--centro-pad);
+  gap:var(--vao-trilho);
+  scroll-padding-inline:var(--centro-pad);
+}
+.trilho > .slide:first-child{ margin-left:calc(-1 * var(--vao-trilho)); }
+.trilho > .slide:last-child{ margin-right:calc(-1 * var(--vao-trilho)); }
+.trilho::-webkit-scrollbar{ display:none; }
+.trilho:focus-visible{ outline-offset:-4px; }
+
+/* -------------------------------------------------------------------------
+   O PRODUTO FLUTUANTE.
+   Antes cada sabor vivia dentro de um cartao colorido (vermelho/verde/
+   carvao/dourado) com um quadrado claro por dentro, e a pizza boiava nesse
+   retangulo. A ordem desta rodada foi o contrario: o produto tem de flutuar
+   DIRETO no preto, como a pizza da abertura. Sumiram o cartao, o gradiente,
+   a moldura e o fundo artificial. O que ficou no lugar foi um halo radial
+   muito discreto — que separa a pizza do preto sem virar cartao.
+   ------------------------------------------------------------------------- */
+.slide{
+  flex:0 0 100%;
+  width:100%;
+  height:100%;
+  scroll-snap-align:center;
+  scroll-snap-stop:always;
+  display:flex; flex-direction:column;
+  min-width:0;
+  padding:0;
+}
+
+.slide__arte{
+  position:relative;
+  flex:1.45 1 0; min-height:0;
+  display:grid; place-items:center;
+  /* sem recuo lateral: a pizza encosta na borda do slide, e e isso que faz a
+     borda da pizza do VIZINHO aparecer no vao — em vez de so preto */
+  padding:clamp(6px,1.6vw,14px) 0 0;
+}
+/* halo, nao cartao: some bem antes da borda para nao virar retangulo */
+.slide__arte::before{
+  content:''; position:absolute; z-index:0;
+  width:min(104%,62vh); aspect-ratio:1;
+  border-radius:50%;
+  background:radial-gradient(circle at 50% 46%,
+    rgba(227,167,47,.13), rgba(227,167,47,.05) 38%, transparent 66%);
+  pointer-events:none;
+}
+/* o nome fica FORA da area da pizza, ancorado na base */
+.slide__nome{
+  position:absolute; left:0; right:0; bottom:0; z-index:2;
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(1.15rem,4.4vw,1.9rem);
+  line-height:1; text-align:center; color:var(--branco);
+  letter-spacing:.01em;
+  padding:0 .5rem;
+  transform:translateX(calc(var(--d, 0) * -14px));
+  opacity:calc(.15 + var(--p, 1) * .85);
+  transition:transform .42s cubic-bezier(.22,.61,.36,1), opacity .3s linear;
+}
+.slide__foto{
+  position:relative; z-index:1;
+  max-width:100%; max-height:100%;
+  width:auto; height:auto;
+  object-fit:contain;
+  /* profundidade: sombra macia + halo quente discreto, sem contorno */
+  filter:drop-shadow(0 26px 34px rgba(0,0,0,.62)) drop-shadow(0 0 46px rgba(227,167,47,.10));
+  /* --- a troca de sabor ---
+     `--d` e a distancia com sinal ate o centro (-1 = uma tela antes,
+     0 = no centro, +1 = uma tela depois) e `--p` e a proximidade (1 no
+     centro, 0 a uma tela). Quem escreve os dois e o app.js, a cada quadro,
+     a partir da posicao real do trilho. Sem movimento pedido, as duas
+     variaveis somem e tudo isto volta sozinho ao repouso.               */
+  transform:
+    translateX(calc(var(--d, 0) * -30px))
+    rotate(calc(var(--d, 0) * -5deg))
+    scale(calc(.93 + var(--p, 1) * .07));
+  opacity:calc(.22 + var(--p, 1) * .78);
+  transition:transform .42s cubic-bezier(.22,.61,.36,1), opacity .3s linear;
+}
+.slide__arte::before{
+  transform:scale(calc(.7 + var(--p, 1) * .3));
+  opacity:calc(.28 + var(--p, 1) * .72);
+  transition:transform .42s cubic-bezier(.22,.61,.36,1), opacity .3s linear;
+}
+/* rotulo de secao continua sendo a unica "caixa" da tela — e a do catalogo */
+.slide__info{
+  flex:1 1 0; min-height:0;
+  display:flex; flex-direction:column;
+  padding:clamp(8px,2.2vw,16px) 0 clamp(4px,1.4vw,10px);
+  overflow:hidden;
+}
+/* o texto acompanha a pizza: cada linha chega um pouco depois da de cima */
+.slide__info > *{
+  transform:translateX(calc(var(--d, 0) * -18px));
+  opacity:calc(.15 + var(--p, 1) * .85);
+  transition:transform .46s cubic-bezier(.22,.61,.36,1), opacity .32s linear;
+}
+.slide__info > :nth-child(2){ transition-delay:.05s; }
+.slide__info > :nth-child(3){ transition-delay:.09s; }
+.slide__info > :nth-child(4){ transition-delay:.13s; }
+.slide__info > :nth-child(5){ transition-delay:.17s; }
+.slide__tags{ display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:.45rem; min-height:0; }
+.slide__tag{
+  padding:.24rem .6rem; border-radius:999px;
+  background:rgba(227,167,47,.14); border:1px solid rgba(227,167,47,.42);
+  color:var(--dourado); font-size:.62rem; font-weight:800;
+  letter-spacing:.07em; text-transform:uppercase;
+}
+.slide__preco{
+  display:flex; align-items:baseline; gap:.34rem;
+  font-family:var(--display); font-weight:400;
+  font-size:clamp(1.85rem,7.6vw,2.9rem);
+  line-height:1; color:var(--branco);
+  white-space:nowrap;                 /* o preço NUNCA quebra */
+}
+.slide__preco i{ font-style:normal; font-size:.44em; color:var(--texto-3); letter-spacing:.09em; }
+.slide__preco .cent{ font-size:.5em; align-self:flex-end; padding-bottom:.14em; }
+/* os ingredientes da casa, como eles ja estao escritos: a descricao aprovada
+   vem em corpo maior e com presenca, em vez de virar letra miuda */
+.slide__rotulo{
+  margin-top:.62rem;
+  font-size:.6rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--dourado);
+}
+.slide__desc{
+  margin-top:.3rem;
+  color:var(--texto); font-size:clamp(.86rem,2.7vw,1rem);
+  line-height:1.5;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+}
+.slide__acoes{ margin-top:auto; display:flex; gap:.55rem; padding-top:.85rem; }
+.slide__acoes .btn{ flex:1 1 auto; }
+
+/* --- controles --- */
+.controles{
+  flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center; gap:.9rem;
+  padding:.6rem clamp(16px,4.4vw,64px) 0;
+}
+.seta{
+  width:46px; height:46px; flex:none;
+  display:grid; place-items:center;
+  border-radius:50%; cursor:pointer;
+  background:rgba(255,255,255,.07); border:1.5px solid rgba(255,255,255,.18);
+  color:var(--branco);
+  transition:background-color .2s, transform .2s var(--curva), opacity .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.seta svg{ width:22px; height:22px; }
+.seta:active{ transform:scale(.92); }
+.seta[disabled]{ opacity:.28; cursor:default; }
+@media (hover:hover) and (pointer:fine){
+  .seta:hover{ background:rgba(255,255,255,.16); }
+}
+
+.pontos{ display:flex; align-items:center; gap:.3rem; min-width:0; max-width:44vw; overflow:hidden; }
+.ponto{
+  width:6px; height:6px; flex:none; border-radius:999px;
+  background:rgba(255,255,255,.24);
+  transition:width .3s var(--curva), background-color .3s;
+}
+.ponto.esta-ativo{ width:20px; background:var(--dourado); }
+
+.arraste{
+  flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center; gap:.45rem;
+  padding:.45rem 0 .1rem;
+  font-size:.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--texto-3);
+  transition:opacity .4s;
+}
+.arraste__dedo{ animation:vai-e-volta 1.9s ease-in-out infinite; display:inline-block; }
+@keyframes vai-e-volta{ 0%,100%{ transform:translateX(-5px) } 50%{ transform:translateX(5px) } }
+.arraste.esta-oculto{ opacity:0; }
+
+/* ============================ 9. RODÍZIO ============================ */
+.rodizio{ width:100%; display:grid; gap:clamp(1.2rem,3.6vw,2.4rem); align-items:center; }
+.rodizio__arte{
+  border-radius:var(--raio-g); overflow:hidden;
+  box-shadow:var(--sombra);
+  max-width:340px; margin-inline:auto; width:100%;
+}
+.rodizio__arte img{ width:100%; height:auto; }
+.rodizio__lista{
+  margin-top:1rem;
+  display:grid; gap:.5rem;
+  grid-template-columns:1fr;
+}
+.rodizio__lista li{
+  display:flex; align-items:flex-start; gap:.6rem;
+  font-size:.92rem; color:var(--texto);
+}
+.rodizio__lista li::before{
+  content:''; flex:none;
+  width:9px; height:9px; margin-top:.44rem; border-radius:50%;
+  background:var(--verde-claro);
+  box-shadow:0 0 0 3px rgba(63,208,122,.16);
+}
+.rodizio__obs{
+  margin-top:.9rem; font-size:.76rem; color:var(--texto-3);
+  padding-left:.72rem; border-left:2px solid rgba(255,255,255,.14);
+}
+.rodizio__acoes{ margin-top:1.2rem; display:flex; flex-wrap:wrap; gap:.6rem; }
+.rodizio__acoes .btn{ flex:1 1 auto; min-width:150px; }
+
+/* =========================== 10. ONDE FICA =========================== */
+.local{ width:100%; display:grid; gap:clamp(1.2rem,3.6vw,2.2rem); align-items:center; }
+.local__end{
+  margin-top:.9rem;
+  font-family:var(--display); text-transform:uppercase; font-weight:400;
+  font-size:clamp(1.3rem,5vw,2rem); line-height:1.06; color:var(--branco);
+}
+.local__end span{ display:block; font-family:var(--corpo); font-weight:700; font-size:.82rem;
+  letter-spacing:.06em; color:var(--dourado); margin-top:.35rem; text-transform:none; }
+
+.local__fones{ margin-top:1.1rem; display:grid; gap:.5rem; }
+.local__fone{
+  display:flex; align-items:center; gap:.8rem;
+  padding:.72rem .9rem; border-radius:var(--raio);
+  background:var(--carvao-2); border:1.5px solid rgba(255,255,255,.09);
+  transition:border-color .22s, background-color .22s, transform .22s var(--curva);
+}
+.local__fone:active{ transform:scale(.985); }
+@media (hover:hover){ .local__fone:hover{ border-color:rgba(227,167,47,.5); background:#1F2126; } }
+.local__fone-ico{
+  width:38px; height:38px; flex:none; display:grid; place-items:center;
+  border-radius:50%; background:rgba(18,129,63,.2); color:var(--verde-claro);
+}
+.local__fone-ico svg{ width:19px; height:19px; }
+.local__fone-txt{ display:flex; flex-direction:column; line-height:1.2; }
+.local__fone-txt small{ font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--texto-3); }
+.local__fone-txt strong{ font-size:1.02rem; color:var(--branco); }
+
+.local__entrega{ margin-top:1.1rem; }
+.local__selo{
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.34rem .8rem; border-radius:999px;
+  background:rgba(18,129,63,.18); border:1px solid rgba(63,208,122,.4);
+  color:var(--verde-claro); font-size:.76rem; font-weight:800;
+}
+.local__entrega .texto{ margin-top:.45rem; }
+
+.local__acoes{ margin-top:1.2rem; display:flex; flex-wrap:wrap; gap:.6rem; }
+.local__acoes .btn{ flex:1 1 auto; }
+
+/* mapa estilizado (sem serviço externo) */
+.local__mapa{
+  position:relative; width:100%; min-height:210px; aspect-ratio:16/11;
+  border-radius:var(--raio-g); overflow:hidden;
+  background:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px) 0 0/34px 34px,
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px) 0 0/34px 34px,
+    radial-gradient(120% 100% at 30% 20%, #1E2127, #0E0F12);
+  border:1.5px solid rgba(255,255,255,.09);
+  display:grid; place-items:center;
+}
+.local__mapa::before, .local__mapa::after{
+  content:''; position:absolute; border-radius:3px; background:rgba(255,255,255,.07);
+}
+.local__mapa::before{ left:-6%; top:34%; width:112%; height:9px; transform:rotate(-7deg); }
+.local__mapa::after { top:-6%; left:38%; width:8px; height:112%; transform:rotate(5deg); }
+.local__pino{ position:relative; width:26px; height:26px; display:grid; place-items:center; z-index:2; }
+.local__pino-ponto{
+  width:15px; height:15px; border-radius:50%;
+  background:var(--vermelho); border:3px solid var(--branco);
+  box-shadow:0 6px 16px rgba(0,0,0,.6);
+}
+.local__pino-pulso{
+  position:absolute; inset:0; border-radius:50%;
+  background:rgba(196,20,31,.5);
+  animation:pino-pulsa 2.4s var(--curva-suave) infinite;
+}
+@keyframes pino-pulsa{ 0%{ transform:scale(.55); opacity:.85 } 70%,100%{ transform:scale(2.5); opacity:0 } }
+.local__mapa-txt{
+  position:absolute; bottom:12px; left:0; right:0; text-align:center; z-index:2;
+  font-family:var(--display); text-transform:uppercase; font-size:1rem; color:var(--branco);
+  letter-spacing:.04em; line-height:1.1;
+}
+.local__mapa-txt span{
+  font-family:var(--corpo); font-weight:700; font-size:.62rem;
+  letter-spacing:.14em; color:var(--texto-3);
+}
+
+/* ============================================================
+   11. TELAS CLARAS — o outro lado da apresentação
+   O briefing pede contraste entre momentos escuros e claros. Aqui vive o
+   sistema que os dois respiros e o fechamento usam: fundo quente claro,
+   texto carvão, vermelho da casa nos CTAs e o dourado SÓ como detalhe.
+   ============================================================ */
+.tela--clara{
+  background:
+    radial-gradient(120% 80% at 15% 0%, #FFFDF8 0%, #F7F3EA 46%, #F1EADC 100%);
+  color:var(--carvao);
+}
+.titulo--escuro{ color:#141518; }
+.texto--escuro{ color:#4A4A50; }
+.rotulo--escuro{ color:#755A11; }          /* dourado legível sobre claro */
+/* o contorno claro do botão não funciona no claro: aqui ele é escuro */
+.btn--contorno-escuro{ --bg:transparent; --fg:#141518; --bd:rgba(20,21,24,.28); }
+@media (hover:hover) and (pointer:fine){
+  .btn--contorno-escuro:hover{ --bd:rgba(20,21,24,.62); --bg:rgba(20,21,24,.05); }
+}
+
+/* ---------- EXPERIÊNCIA LEGUSTE ---------- */
+.expe{ width:100%; max-width:1180px; margin-inline:auto; }
+.expe__cabeca{ max-width:60ch; }
+.expe__linha{ margin-top:1rem; }
+.expe__passos{
+  list-style:none; margin:clamp(1.6rem,4vw,2.8rem) 0 0; padding:0;
+  display:grid; gap:clamp(.9rem,2.4vw,1.6rem);
+}
+.expe__passo{
+  position:relative; padding-left:3.4rem;
+  border-top:1px solid rgba(20,21,24,.14); padding-top:1rem;
+}
+.expe__num{
+  position:absolute; left:0; top:1rem;
+  font-family:var(--display); font-size:1.5rem; line-height:1;
+  color:var(--vermelho);
+}
+.expe__nome{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(1.15rem,3vw,1.5rem); line-height:1.05; color:#141518;
+}
+.expe__txt{ margin-top:.3rem; color:#5A5A60; font-size:.94rem; }
+.expe__foto{
+  margin:clamp(1.4rem,3.6vw,2.4rem) 0 0;
+  border-radius:var(--raio); overflow:hidden;
+  box-shadow:0 26px 60px rgba(20,15,6,.18);
+}
+.expe__foto img{ width:100%; height:clamp(200px,34vh,400px); object-fit:cover; display:block; }
+
+/* ---------- PEÇA DO SEU JEITO ---------- */
+.monte{ width:100%; max-width:1180px; margin-inline:auto; }
+.monte__cabeca{ max-width:60ch; }
+.monte__linha{ margin-top:1rem; }
+.monte__massas{
+  list-style:none; margin:clamp(1.6rem,4vw,2.6rem) 0 0; padding:0;
+  display:grid; gap:clamp(.7rem,2vw,1.1rem);
+}
+.monte__massa{
+  display:flex; align-items:baseline; gap:.9rem; flex-wrap:wrap;
+  padding:clamp(.9rem,2.4vw,1.3rem) clamp(1rem,2.6vw,1.5rem);
+  background:#FFFDF9; border:1px solid rgba(20,21,24,.1);
+  border-radius:var(--raio);
+}
+.monte__massa-nome{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(1.2rem,3.4vw,1.7rem); line-height:1; color:#141518;
+}
+.monte__massa-desc{
+  color:#5A5A60; font-size:.92rem; flex:1 1 12ch; min-width:0;
+}
+.monte__massa-extra{
+  font-size:.78rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  color:#755A11; white-space:nowrap;
+}
+.monte__acoes{
+  margin-top:clamp(1.4rem,3.4vw,2.2rem);
+  display:flex; flex-wrap:wrap; gap:.6rem;
+}
+.monte__acoes .btn{ flex:1 1 auto; min-width:190px; max-width:300px; }
+
+/* ---------- FECHAMENTO (claro) ---------- */
+.tela--fim{ text-align:center; }
+.fim{
+  width:100%; max-width:1180px; margin-inline:auto;
+  display:grid; align-items:center;
+  gap:clamp(1.2rem,3vw,2.4rem);
+}
+.fim__pizza{
+  margin:0; position:relative;
+  display:flex; align-items:center; justify-content:center;
+}
+/* halo quente MUITO leve, para a pizza soltar do fundo claro sem virar caixa.
+   CENTRADO POR CONTA PRÓPRIA (left/top/transform), e não pela posição estática
+   que o flex daria: um filho absoluto de um container flex é posicionado de
+   formas diferentes entre navegadores quando não se diz onde ele fica. Com o
+   centro explícito o halo cai no meio da pizza em qualquer um.             */
+.fim__pizza::before{
+  content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(96%,52vh); aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(circle at 50% 50%, rgba(227,167,47,.20), transparent 66%);
+  pointer-events:none;
+}
+.fim__pizza img{
+  position:relative; width:min(78vw,46vh); height:auto;
+  /* A FOTO JÁ TEM a própria sombra de apoio (medida no recorte, preservada).
+     Uma segunda sombra forte em cima dela lia como borrão duplo embaixo da
+     pizza. Aqui a sombra do CSS é só AMBIENTE — mais fraca e mais aberta que
+     a de contato, para somar profundidade em vez de competir.               */
+  filter:drop-shadow(0 18px 30px rgba(40,26,4,.24));
+}
+.fim__texto{ display:flex; flex-direction:column; align-items:center; }
+.fim__logo{ width:78px; height:78px; object-fit:contain; border-radius:50%; margin-bottom:.9rem; }
+.fim__titulo{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(2.6rem,10vw,5.2rem); line-height:.9; color:#141518;
+}
+.fim__sub{ margin-top:.9rem; color:#4A4A50; max-width:40ch; }
+.fim__acoes{ margin-top:1.4rem; display:flex; flex-wrap:wrap; gap:.6rem; justify-content:center; width:100%; }
+.fim__acoes .btn{ flex:1 1 auto; min-width:180px; max-width:290px; }
+.fim__dados{
+  grid-column:1 / -1;
+  margin-top:clamp(.6rem,2vw,1.2rem); padding-top:1.3rem; width:100%;
+  border-top:1px solid rgba(20,21,24,.14);
+  display:grid; gap:clamp(.9rem,2.4vw,1.6rem);
+  text-align:left; font-size:.88rem; color:#4A4A50;
+}
+.fim__campo small{
+  display:block; margin-bottom:.3rem;
+  font-size:.62rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:#755A11;
+}
+.fim__campo strong{ color:#141518; }
+.fim__campo a{ color:#C4141F; font-weight:700; }
+.fim__credito{
+  grid-column:1 / -1;
+  margin-top:.6rem; font-size:.7rem; color:#5F5F66; line-height:1.6; max-width:52ch;
+  margin-inline:auto;
+}
+.fim__credito strong{ color:#755A11; }
+
+/* no desktop o fechamento vira DUAS colunas: pizza de um lado, texto do outro */
+@media (min-width:1000px){
+  .fim{ grid-template-columns:1fr 1.08fr; text-align:left; }
+  .fim__texto{ align-items:flex-start; }
+  .fim__sub{ margin-inline:0; }
+  .fim__acoes{ justify-content:flex-start; }
+  .fim__pizza img{ width:min(34vw,56vh); }
+  .fim__dados{ grid-template-columns:1fr 1fr 1fr; }
+}
+@media (min-width:600px) and (max-width:999px){
+  /* dois por linha: sem o terceiro ocupar a linha inteira, ele ficaria
+     sozinho na metade esquerda com um buraco do lado. */
+  .fim__dados{ grid-template-columns:1fr 1fr; gap:1.2rem 1.4rem; }
+  .fim__campo:nth-child(3){ grid-column:1 / -1; }
+}
+
+/* ============================ 12. CARRINHO ============================ */
+.carrinho{ position:fixed; inset:0; z-index:200; visibility:hidden; pointer-events:none; }
+.carrinho.esta-aberto{ visibility:visible; pointer-events:auto; }
+.carrinho__veu{
+  position:absolute; inset:0; background:rgba(4,5,7,.68);
+  opacity:0; transition:opacity .3s var(--curva-suave);
+  backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+}
+.carrinho.esta-aberto .carrinho__veu{ opacity:1; }
+
+.carrinho__caixa{
+  position:absolute; top:0; right:0; bottom:0;
+  width:min(420px,100%);
+  display:flex; flex-direction:column;
+  background:var(--carvao); border-left:1px solid rgba(255,255,255,.1);
+  box-shadow:var(--sombra-forte);
+  transform:translateX(102%);
+  transition:transform .38s var(--curva);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.carrinho.esta-aberto .carrinho__caixa{ transform:none; }
+
+.carrinho__cabeca{
+  flex:none; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding:calc(1rem + env(safe-area-inset-top)) 1.1rem 1rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.carrinho__cabeca h2{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:1.4rem; color:var(--branco);
+}
+.carrinho__x{
+  width:40px; height:40px; flex:none; display:grid; place-items:center;
+  border-radius:50%; background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.14); cursor:pointer;
+}
+.carrinho__x svg{ width:19px; height:19px; }
+
+.carrinho__corpo{ flex:1 1 auto; min-height:0; overflow-y:auto; padding:1rem 1.1rem; }
+.carrinho__vazio{ color:var(--texto-2); font-weight:700; text-align:center; padding:2.4rem .5rem; }
+.carrinho__vazio span{ font-weight:500; font-size:.84rem; color:var(--texto-3); }
+.carrinho__lista{ display:grid; gap:.6rem; }
+
+.item{
+  display:grid; grid-template-columns:60px 1fr auto; gap:.7rem;
+  padding:.6rem; border-radius:var(--raio);
+  background:var(--carvao-2); border:1px solid rgba(255,255,255,.07);
+  animation:item-entra .34s var(--curva) both;
+}
+@keyframes item-entra{ from{ opacity:0; transform:translateY(9px) scale(.98) } to{ opacity:1; transform:none } }
+.item__foto{
+  width:60px; height:60px; border-radius:11px; object-fit:contain;
+  background:radial-gradient(circle at 50% 40%, #26282E, #16181C);
+}
+.item__txt{ min-width:0; display:flex; flex-direction:column; }
+.item__nome{ font-size:.86rem; font-weight:800; color:var(--branco); line-height:1.25; }
+.item__opc{ font-size:.7rem; color:var(--texto-3); line-height:1.4; margin-top:.1rem; }
+.item__obs{ font-size:.7rem; color:var(--dourado); margin-top:.2rem; }
+.item__pe{ display:flex; flex-direction:column; align-items:flex-end; justify-content:space-between; gap:.4rem; }
+.item__preco{ font-weight:800; font-size:.86rem; color:var(--branco); white-space:nowrap; }
+.item__remover{
+  border:0; background:transparent; padding:0; cursor:pointer;
+  font-size:.68rem; font-weight:700; color:var(--texto-3); text-decoration:underline;
+}
+.item__remover:hover{ color:var(--vermelho); }
+.item__qtd{
+  display:inline-flex; align-items:center; gap:.1rem;
+  background:rgba(255,255,255,.06); border-radius:999px; padding:2px;
+}
+.item__qtd button{
+  width:26px; height:26px; display:grid; place-items:center;
+  border:0; border-radius:50%; background:transparent; cursor:pointer;
+  font-size:1rem; font-weight:800; color:var(--branco); line-height:1;
+}
+.item__qtd button:hover{ background:rgba(255,255,255,.12); }
+.item__qtd span{ min-width:20px; text-align:center; font-size:.8rem; font-weight:800; }
+
+.carrinho__pe{
+  flex:none; padding:1rem 1.1rem 1.1rem;
+  border-top:1px solid rgba(255,255,255,.08);
+  background:var(--carvao);
+}
+.carrinho__linha{
+  display:flex; align-items:baseline; justify-content:space-between;
+  margin-bottom:.55rem;
+}
+.carrinho__linha span{ color:var(--texto-2); font-size:.86rem; }
+.carrinho__linha strong{ font-family:var(--display); font-weight:400; font-size:1.6rem; color:var(--branco); }
+.carrinho__nota{ font-size:.72rem; color:var(--texto-3); margin-bottom:.7rem; }
+.carrinho__limpar{
+  width:100%; margin-top:.6rem; padding:.5rem;
+  background:transparent; border:0; cursor:pointer;
+  font-size:.76rem; font-weight:700; color:var(--texto-3); text-decoration:underline;
+}
+
+/* ========================= 13. BARRA FIXA ========================= */
+.barra{
+  position:fixed; left:0; right:0; bottom:0; z-index:150;
+  display:flex; align-items:center; gap:.7rem;
+  padding:.6rem clamp(12px,4vw,20px);
+  padding-bottom:calc(.6rem + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg, rgba(11,12,14,.82), rgba(11,12,14,.99));
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-top:1px solid rgba(255,255,255,.1);
+  transform:translateY(110%);
+  transition:transform .36s var(--curva);
+}
+.barra.esta-visivel{ transform:none; }
+.barra__bt{
+  flex:1 1 auto; min-height:50px;
+  display:flex; align-items:center; justify-content:center; gap:.5rem;
+  border:0; border-radius:999px; cursor:pointer;
+  background:var(--verde); color:var(--branco);
+  font-weight:800; font-size:.94rem;
+  box-shadow:0 10px 26px rgba(18,129,63,.34);
+  animation:barra-chama 3.4s var(--curva-suave) 1s infinite;
+}
+@keyframes barra-chama{
+  0%,88%,100%{ box-shadow:0 10px 26px rgba(18,129,63,.34) }
+  93%        { box-shadow:0 10px 30px rgba(18,129,63,.5), 0 0 0 5px rgba(63,208,122,.14) }
+}
+.barra__ico svg{ width:20px; height:20px; }
+.barra__qtd{
+  min-width:22px; height:22px; padding:0 6px;
+  display:inline-grid; place-items:center; border-radius:999px;
+  background:rgba(0,0,0,.28); font-size:.74rem; font-weight:800;
+}
+.barra__total{
+  font-family:var(--display); font-weight:400; font-size:1.12rem;
+  color:var(--branco); white-space:nowrap;
+}
+
+/* ============================ 14. MODAL ============================ */
+.modal{ position:fixed; inset:0; z-index:300; display:flex; align-items:flex-end; justify-content:center; }
+.modal[hidden]{ display:none; }
+.modal__veu{
+  position:absolute; inset:0; background:rgba(4,5,7,.72);
+  animation:veu-entra .28s var(--curva-suave) both;
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+}
+@keyframes veu-entra{ from{ opacity:0 } to{ opacity:1 } }
+
+.modal__caixa{
+  position:relative;
+  width:min(560px,100%);
+  max-height:min(92dvh,92vh);
+  display:flex; flex-direction:column;
+  background:var(--carvao);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--raio-g) var(--raio-g) 0 0;
+  box-shadow:var(--sombra-forte);
+  padding-bottom:env(safe-area-inset-bottom);
+  animation:modal-sobe .4s var(--curva) both;
+}
+@keyframes modal-sobe{ from{ transform:translateY(24px); opacity:0 } to{ transform:none; opacity:1 } }
+
+.modal__x{
+  position:absolute; top:.7rem; right:.7rem; z-index:3;
+  width:38px; height:38px; display:grid; place-items:center;
+  border-radius:50%; background:rgba(11,12,14,.6);
+  border:1.5px solid rgba(255,255,255,.16); cursor:pointer;
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+}
+.modal__x svg{ width:18px; height:18px; }
+
+.modal__topo{
+  flex:none; display:flex; gap:.9rem; align-items:center;
+  padding:1.2rem 1.2rem .9rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.modal__foto{
+  width:98px; height:98px; flex:none; border-radius:18px;
+  background:radial-gradient(circle at 50% 40%, #2A2D34, #141619);
+  display:grid; place-items:center; overflow:hidden;
+}
+.modal__foto img{ width:100%; height:100%; object-fit:contain; }
+.modal__topo-txt{ min-width:0; }
+.modal__topo-txt h3{
+  font-family:var(--display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(1.2rem,4.6vw,1.6rem); line-height:1.04; color:var(--branco);
+}
+.modal__preco{
+  margin-top:.25rem;
+  font-family:var(--display); font-weight:400; font-size:1.5rem; color:var(--dourado);
+  white-space:nowrap;
+}
+.modal__desc{ margin-top:.35rem; font-size:.78rem; color:var(--texto-2); }
+
+.modal__corpo{ flex:1 1 auto; min-height:0; overflow-y:auto; padding:1rem 1.2rem; display:grid; gap:1rem; }
+.modal__bloco{ display:grid; gap:.5rem; }
+.modal__bloco legend, .modal__rotulo{
+  font-size:.66rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--texto-3); margin-bottom:.1rem;
+}
+.modal__bloco--obs{ gap:.4rem; }
+.tamanhos{ display:grid; gap:.4rem; }
+.tamanho{
+  display:flex; align-items:center; gap:.7rem;
+  padding:.62rem .8rem; border-radius:12px; cursor:pointer;
+  background:var(--carvao-2); border:1.5px solid rgba(255,255,255,.09);
+  transition:border-color .2s, background-color .2s;
+}
+.tamanho input{ position:absolute; opacity:0; pointer-events:none; }
+.tamanho__bolinha{
+  width:19px; height:19px; flex:none; border-radius:50%;
+  border:2px solid rgba(255,255,255,.3); display:grid; place-items:center;
+}
+.tamanho__bolinha::after{
+  content:''; width:9px; height:9px; border-radius:50%; background:var(--dourado);
+  transform:scale(0); transition:transform .2s var(--curva);
+}
+.tamanho__txt{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; line-height:1.2; }
+.tamanho__txt b{ font-size:.87rem; color:var(--branco); }
+.tamanho__txt small{ font-size:.68rem; color:var(--texto-3); }
+.tamanho__extra{ font-size:.78rem; font-weight:800; color:var(--dourado); white-space:nowrap; }
+.tamanho:has(input:checked){ border-color:var(--dourado); background:#22242A; }
+.tamanho:has(input:checked) .tamanho__bolinha{ border-color:var(--dourado); }
+.tamanho:has(input:checked) .tamanho__bolinha::after{ transform:scale(1); }
+.tamanho:has(input:focus-visible){ outline:3px solid var(--dourado); outline-offset:2px; }
+
+#modal-obs{
+  width:100%; resize:none;
+  padding:.72rem .85rem; border-radius:12px;
+  background:var(--carvao-2); border:1.5px solid rgba(255,255,255,.09);
+  color:var(--texto); font:inherit; font-size:.86rem;
+}
+#modal-obs::placeholder{ color:var(--texto-3); }
+#modal-obs:focus{ outline:none; border-color:var(--dourado); }
+
+.modal__pe{
+  flex:none; display:flex; align-items:center; gap:.7rem;
+  padding:1rem 1.2rem 1.2rem;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.qtd{
+  display:flex; align-items:center; gap:.1rem; flex:none;
+  background:var(--carvao-2); border:1.5px solid rgba(255,255,255,.1);
+  border-radius:999px; padding:4px;
+}
+.qtd button{
+  width:38px; height:38px; display:grid; place-items:center;
+  border:0; border-radius:50%; background:transparent; cursor:pointer;
+  font-size:1.2rem; font-weight:800; color:var(--branco); line-height:1;
+}
+.qtd button:hover{ background:rgba(255,255,255,.1); }
+#modal-qtd{ min-width:26px; text-align:center; font-weight:800; }
+.modal__add{ flex:1 1 auto; min-height:50px; font-size:.92rem; }
+.modal__add span{ white-space:nowrap; }
+
+/* ======================= 15. AJUSTES POR LARGURA ======================= */
+
+/* Celulares estreitos (320–360) */
+@media (max-width:360px){
+  :root{ --topo-h:56px; }
+  .topo__marca img{ width:38px; height:38px; }
+  .topo__nome strong{ font-size:1rem; }
+  .topo__nome small{ display:none; }
+  .btn__txt{ display:none; }              /* só o contador no topo */
+  .btn--pedido{ padding:.5rem .7rem; }
+  .hero__acoes .btn{ min-width:100%; max-width:none; }
+  .hero__fatos{ gap:.85rem; }
+  /* 12px que faltavam na caixa de informacao do slide (iPhone SE).
+     So aperto de espaco: nada de texto sai.                                 */
+  .slide__info{ padding-top:4px; }
+  .slide__desc{ margin-top:.3rem; }
+  .slide__acoes{ padding-top:.5rem; }
+  .slide__tags{ margin-bottom:.3rem; }
+  /* 44px e o piso de alvo de toque; aqui e o que faz o cartao inteiro caber */
+  .slide__acoes .btn{ min-height:44px; }
+}
+
+/* Ajuste fino do tamanho da roda conforme a altura disponível */
+@media (max-height:700px){
+  .roda{ width:min(74vw,40vh); }
+  .hero__sub{ margin-top:.6rem; font-size:.86rem; }
+  .hero__fatos{ margin-top:.9rem; }
+  .hero__rolar{ display:none; }
+}
+@media (max-height:600px){
+  .roda{ width:min(60vw,34vh); }
+  .hero__fatos{ display:none; }
+}
+
+/* Tablet retrato — o produto passa a ter a maior parte da largura */
+@media (min-width:600px){
+  .slide{ flex-direction:row; align-items:stretch; gap:clamp(.8rem,2.2vw,2rem); }
+  .slide__arte{
+    flex:1 1 56%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem;
+    padding:clamp(14px,2.6vw,26px) 0;   /* sem recuo: a pizza encosta na borda */
+  }
+  .slide__nome{
+    position:static; text-align:left; padding:0;
+    align-self:center;
+    font-size:clamp(1.6rem,3.6vw,2.4rem);
+  }
+  .slide__foto{ flex:1 1 auto; min-height:0; }
+  .slide__info{ flex:1 1 44%; justify-content:center; padding:clamp(.9rem,2.4vw,1.4rem) clamp(0px,1.4vw,18px) clamp(.9rem,2.4vw,1.4rem) 0; }
+  .slide__info .slide__tags{ margin-bottom:.6rem; }
+  .slide__rotulo{ margin-top:.75rem; font-size:.64rem; }
+  .slide__desc{ margin-top:.35rem; -webkit-line-clamp:4; }
+  .slide__acoes{ margin-top:1.2rem; }
+  .slide__acoes .btn{ flex:0 1 auto; min-width:190px; }
+
+  .rodizio{ grid-template-columns:minmax(240px,320px) 1fr; }
+  .rodizio__arte{ margin-inline:0; max-width:none; }
+  .casa{ grid-template-columns:1fr; }
+  /* as areas acompanham os nomes novos: a principal atravessa as duas linhas e
+     as duas menores ficam a direita. Nome de area antigo nao da erro — ele cai
+     no posicionamento automatico e a colagem perde o desenho em silencio.
+     As duas linhas passam a 1fr e a colagem recebe uma ALTURA de visor: sem
+     isso a fotografia crescia so pela largura e sobrava meio visor de preto. */
+  .casa__fotos{
+    grid-template-columns:1.35fr 1fr;
+    grid-template-rows:1fr 1fr;
+    grid-template-areas:"principal forno" "principal salao";
+    min-height:clamp(360px,52vh,600px);
+  }
+  .casa__fig{ aspect-ratio:auto; }
+  .fim__acoes .btn{ flex:0 1 auto; }
+}
+
+/* Desktop */
+@media (min-width:1000px){
+  :root{ --topo-h:74px; }
+  .topo__menu{ display:none; }
+  .topo__nav-mob{ display:none; }
+  .btn__txt{ display:inline; }
+
+  .tela{ padding-top:calc(var(--topo-h) + 22px); }
+
+  /* ---------------------------------------------------------------------
+     TEXTO E PIZZA SAO UMA COMPOSICAO SO.
+     Antes: `.hero__texto` e `.hero__pizza` dividiam 52%/48% de TODO o visor e
+     o vao ainda crescia (`gap:6rem` a partir de 1440). Em 1920 isso empurrava
+     o texto para um extremo e a pizza para o outro, com um vazio enorme no
+     meio — exatamente o defeito relatado. Aqui a dupla vive dentro de um
+     container de largura controlada, CENTRADO: cresce junto ate o limite e
+     para. Quem cede espaco nas laterais e a margem, nao a composicao.      */
+  .hero{
+    max-width:min(1240px,100%);
+    margin-inline:auto;
+    flex-direction:row; align-items:center;
+    /* CENTRADA DENTRO DA PROPRIA MEDIDA. So `margin-inline:auto` nao bastava:
+       ele centra a CAIXA de 1240px na tela, mas dentro dela quem sobra fica
+       todo a direita, porque nao havia `justify-content`. Medido em 1366: o
+       texto pede 560px, a roda 430px e o vao 41px — 1031px de conteudo numa
+       caixa de 1240, e os 209px restantes empurravam a dupla para a esquerda.
+       Era a versao discreta do mesmo defeito que o brief descreve.           */
+    justify-content:center;
+    gap:clamp(1.6rem,3vw,3.2rem);   /* vao ESTAVEL: nao cresce com a tela */
+    text-align:left;
+  }
+  /* o texto para de esticar; a pizza tem tamanho proprio e fica maior que ele,
+     como manda o brief ("a pizza pode ficar um pouco maior que o texto") */
+  .hero__texto{ text-align:left; flex:1 1 480px; min-width:0; max-width:600px; }
+  .hero__sub{ margin-inline:0; }
+  .hero__acoes{ justify-content:flex-start; }
+  .hero__fatos{ justify-content:flex-start; }
+  /* A PIZZA CEDE LARGURA — ESTA ERA A HOME QUEBRADA.
+     Ate aqui o `.hero__pizza` tinha `flex:0 0 auto` (e `flex:none` na base):
+     nao encolhia NUNCA. Em 1366 a conta do desktop da texto 600 + vao 41 +
+     roda 530 = 1171px dentro de uma caixa de 1045. Sem ninguem para ceder, o
+     flex NAO quebra: ele TRANSBORDA, e a coluna de texto — que e quem tem
+     `min-width:0` — fica com os ~460px restantes. O paragrafo de 106
+     caracteres cai para 5px por glifo e passa a quebrar uma palavra por
+     linha, exatamente o defeito relatado. A varredura de larguras nao via
+     porque calculava a largura do texto DIVIDINDO o que sobrava: a formula
+     presumia que a linha sempre cabia, e quando nao cabia ela mentia.
+     Com a pizza podendo encolher, quem cede espaco e ela (tem `aspect-ratio`
+     e nenhum texto dentro); a largura REAL do texto passa a ser
+     `largura - roda - vao` das duas formas, entao a conta do auditor e o
+     layout do navegador entram em acordo — e e isso que a bancada verifica. */
+  .hero__pizza{ flex:0 1 auto; width:auto; }
+  .roda{ width:min(40vw, 56vh); }
+
+  .casa{ grid-template-columns:1fr 1.05fr; align-items:center; gap:clamp(2rem,4.5vw,4.5rem); }
+  .casa__texto{ max-width:620px; }
+  /* a foto principal atravessa as duas linhas: e ela que da presenca a metade
+     direita, que antes ficava vazia (o grid tinha duas colunas e um filho so).
+     A colagem ocupa uma ALTURA de visor — a fotografia passa a ser metade da
+     composicao da tela, que e o que faltava para a secao nao parecer vazia. */
+  .casa__fotos{
+    grid-template-columns:1.45fr 1fr;
+    grid-template-rows:1fr 1fr;
+    grid-template-areas:"principal forno" "principal salao";
+    min-height:clamp(380px,58vh,660px);
+  }
+  .casa__fig{ aspect-ratio:auto; }
+
+  .titulo{ font-size:clamp(2.4rem,4vw,3.6rem); }
+  .local{ grid-template-columns:1fr 1fr; gap:clamp(2rem,5vw,4.5rem); }
+  .local__mapa{ min-height:340px; }
+  .rodizio{ grid-template-columns:minmax(280px,380px) 1fr; gap:clamp(2rem,5vw,4.5rem); }
+  .rodizio__lista{ grid-template-columns:1fr 1fr; }
+  .local__fones{ grid-template-columns:1fr 1fr; }
+  .local__acoes .btn{ flex:0 1 auto; min-width:190px; }
+
+  .slide{ gap:clamp(2rem,4.5vw,4.5rem); }
+  .slide__arte{ flex:1 1 60%; }
+  .slide__info{ flex:1 1 40%; }
+  .slide__nome{ font-size:clamp(1.9rem,3.2vw,2.8rem); }
+  .slide__preco{ font-size:clamp(2.2rem,3.6vw,3rem); }
+
+  .cardapio{ height:calc(100dvh - var(--topo-h) - 30px); }
+}
+
+/* Telas grandes */
+@media (min-width:1440px){
+  .tela{ padding-left:clamp(40px,6vw,110px); padding-right:clamp(40px,6vw,110px); }
+  .cardapio__cabeca, .controles{ padding-left:clamp(40px,6vw,110px); padding-right:clamp(40px,6vw,110px); }
+  .cardapio{ --centro-pad:clamp(40px,4.5vw,86px); }
+  /* NAO aumentar o vao do hero aqui. Era esta linha que, em tela grande,
+     afastava texto e pizza justamente quando sobra espaco — o vao tem de
+     ser o mesmo em 1440 e em 1920. O que cresce e o container (1240px).  */
+  .hero__texto{ flex:1 1 600px; max-width:640px; }
+  .roda{ width:min(38vw, 58vh); }
+}
+@media (min-width:1800px){
+  .tela{ padding-left:clamp(60px,8vw,160px); padding-right:clamp(60px,8vw,160px); }
+  .cardapio__cabeca, .controles{ padding-left:clamp(60px,8vw,160px); padding-right:clamp(60px,8vw,160px); }
+  .cardapio{ --centro-pad:clamp(60px,4.5vw,150px); }
+  /* a composicao para de crescer: em 1920 o par fica do mesmo tamanho que em
+     1440 e CENTRADO, em vez de esticado de ponta a ponta da tela          */
+  .hero{ max-width:1320px; }
+  .roda{ width:min(34vw, 60vh); }
+}
+
+/* Celular: a barra fixa ocupa a base — reserva espaço para não cobrir nada */
+@media (max-width:999px){
+  body.esta-com-barra .tela{ padding-bottom:calc(84px + env(safe-area-inset-bottom)); }
+  body.esta-com-barra .cardapio{ height:calc(100dvh - var(--topo-h) - 92px); }
+}
+
+/* Paisagem de celular (pouca altura) */
+@media (max-height:520px) and (orientation:landscape){
+  .tela{ min-height:auto; padding-block:calc(var(--topo-h) + 16px) 26px; }
+  .roda{ width:min(30vw,52vh); }
+  .hero__fatos{ display:none; }
+  .cardapio{ height:auto; min-height:0; }
+  .trilho{ min-height:380px; }
+}
+
+/* ====================== 16. MOVIMENTO REDUZIDO ======================
+   Quem pediu menos movimento recebe o estado FINAL, sem animação.
+   Nada de conteúdo dependendo de animação para aparecer.              */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    animation-delay:0ms !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .roda{ animation:none; opacity:1; transform:none; }
+  /* a troca de sabor nao existe sem movimento: nada de deslocamento, giro ou
+     transparencia em repouso — vale mesmo se o JS nao tiver limpado a tempo */
+  .slide__foto, .slide__nome, .slide__arte::before, .slide__info > *{
+    transform:none; opacity:1; transition:none;
+  }
+  .roda__foto{ animation:none; transform:none; }
+  .roda__brilho{ animation:none; opacity:.9; }
+  .hero__texto > *{ animation:none; opacity:1; transform:none; }
+  .hero__rolar-linha{ animation:none; opacity:1; transform:none; }
+  .arraste__dedo{ animation:none; }
+  .local__pino-pulso{ animation:none; opacity:.5; }
+  .rotulo__ponto{ animation:none; }
+  .barra__bt{ animation:none; }
+  .item{ animation:none; }
+  .modal__caixa{ animation:none; }
+  .modal__veu{ animation:none; }
+  main{ scroll-snap-type:none; }   /* sem encaixe: rolagem totalmente livre */
+}
+
+/* ===================== 17. MOVIMENTO FORÇADO =====================
+   `data-movimento="on"` no <html> sobrepõe o "reduzir movimento".
+   Serve para o botão de demonstração da apresentação.               */
+html[data-movimento="on"] .roda{
+  animation:roda-entra var(--t-entrada) var(--curva) .1s both !important;
+}
+html[data-movimento="on"] .roda__foto{
+  animation:roda-gira var(--t-ambiente) linear infinite var(--atraso-ambiente) !important;
+}
+html[data-movimento="on"] .roda__brilho{
+  animation:brilho-respira 7.5s var(--curva-suave) infinite 1.9s !important;
+}
+html[data-movimento="on"] .hero__texto > *{ animation:surgir .8s var(--curva) both !important; }
+html[data-movimento="on"] .arraste__dedo{ animation:vai-e-volta 1.9s ease-in-out infinite !important; }
+
+/* ============ 18. TELA QUE NÃO CORTA O PRÓPRIO COMEÇO ============
+   `.tela` é uma coluna flex CENTRADA. Quando o conteúdo é mais alto que o
+   visor — o rodízio no celular, a casa e o "onde fica" nas telas estreitas —
+   centrar empurra a primeira linha para fora da área rolável: o usuário nunca
+   alcança o começo da seção. `margin-block:auto` no filho dá o mesmo
+   centramento quando sobra espaço e alinha pelo topo quando falta.
+   A tela do cardápio fica de fora: o bloco dela tem altura calculada.       */
+.tela > *{ margin-block:auto; }
+.tela--cardapio > *{ margin-block:0; }
+
+/* Em telas baixas o slide não cabe com tudo: a descrição passa a duas linhas
+   e a arte cede um pouco de altura para a informação. É densidade, não corte —
+   o texto completo continua no modal do produto.
+   SÓ até 599px: a partir de 600px o slide vira LINHA e estes mesmos `flex`
+   passariam a repartir a LARGURA, roubando a foto em vez de dar altura.       */
+@media (max-width:599px) and (max-height:700px){
+  /* 40/60, e não 36/64: o brief é explícito em "a pizza MUITO maior". Com 36%
+     a foto caía para 36% da altura do trilho — abaixo do piso que a própria
+     varredura exige — e o produto deixava de ser o protagonista justamente no
+     celular. Medido: 40% ainda entrega à caixa de informação a altura que ela
+     precisa, com folga, em 320×480, 320×568, 375×667 e 360×740.            */
+  .slide__arte{ flex:1 1 40%; }
+  .slide__info{ flex:1 1 60%; }
+  .slide__desc{ -webkit-line-clamp:2; line-clamp:2; }
+}
+
+/* ============ 19. O BLOCO DO CARDÁPIO NÃO ESMAGA O CARTÃO ============
+   Abaixo de ~560px de altura a conta "visor - topo" entrega um trilho menor do
+   que um cartão de produto precisa (em 320x480 sobram 201px onde o cartão pede
+   262). Aqui o bloco para de encolher e passa a ROLAR dentro da própria seção —
+   o site já faz isso em todas as outras telas. Melhor 40px de rolagem do que a
+   informação do produto cortada.                                             */
+@media (max-height:560px){
+  .cardapio{ min-height:464px; }
+}
+
+/* ============ 19. O SLIDE CABE NO CELULAR PEQUENO ============
+   Em 320×568 a conta fecha com 2px de sobra: o preço, a descrição de duas
+   linhas e os dois botões de 48px enchem a caixa, e qualquer fonte um pouco
+   mais larga que a estimativa derruba o rodapé do cartão para fora. Os 2px não
+   são folga, são coincidência. O que cede aqui é o que NÃO é essencial:
+   - o preço é a maior peça da caixa; 1,62rem ainda é o maior número da tela;
+   - a descrição volta a UMA linha — as duas linhas não têm espaço para respirar;
+   - os botões descem ao desconto de densidade que o CSS já usa em tela baixa.
+   Nada de texto sai: o conteúdo completo continua no modal do produto.        */
+@media (max-width:360px) and (max-height:640px){
+  .slide__preco{ font-size:1.62rem; }
+  .slide__desc{ -webkit-line-clamp:1; line-clamp:1; }
+  .slide__acoes .btn{ min-height:44px; }
+}
+
+/* ============ 20. A NAV DE TEXTO SÓ ENTRA QUANDO CABE ============
+   Ela nasceu com 5 links e caberia em 1000px. Os dois respiros novos
+   ("Experiência" e "Monte a sua") levaram a lista a 6 links de texto, e a
+   conta deixa de fechar no tablet deitado: 6 links (~75px cada) + a marca
+   (~230px) + o botão de pedido (~135px) pedem pouco mais de 1100px de
+   conteúdo, contra 1024 - 104 de padding = 920px disponíveis. O resultado
+   seria o cabeçalho quebrando em duas linhas ou o botão saindo da barra.
+   Por isso a nav de texto passa a exigir 1200px. Abaixo disso vale o menu
+   hambúrguer, que já existe e não depende de largura.
+   Fica no FIM do arquivo de propósito: é uma decisão de cabeçalho e precisa
+   ganhar de qualquer `display` declarado antes.                            */
+@media (min-width:1200px){
+  .topo__nav{ display:flex; }
+  .topo__menu{ display:none; }
+  .topo__nav-mob{ display:none; }
+}
+
+/* ============ 21. A MESMA MEDIDA EM TODAS AS TELAS ESCURAS ============
+   Na abertura o texto e a pizza ja vivem dentro de 1240px centrados, para a
+   dupla nao se separar conforme a tela alarga. As outras telas escuras
+   ficaram de fora e sofriam do MESMO defeito por outro caminho: `.casa`,
+   `.rodizio` e `.local` sao grades de duas colunas que ocupavam a largura
+   inteira do visor. Em 1920 isso e 1792px de conteudo — cada coluna com
+   ~860px para um texto que pede 56ch, ou seja, metade da coluna vazia e as
+   duas areas empurradas para os extremos, exatamente o que o brief proibe.
+   Aqui elas passam a obedecer a mesma medida da abertura. Quem cede espaco
+   nas laterais e a margem; a composicao cresce ate o limite e para.        */
+@media (min-width:1000px){
+  .casa, .rodizio, .local{ max-width:1240px; margin-inline:auto; }
+}
+
+/* ============ 22. AS DUAS TELAS CLARAS NO DESKTOP ============
+   No celular os tres momentos e as tres massas empilham, que e o certo. Em
+   tela larga a pilha virava uma COLUNA ESTREITA de texto no meio de muito
+   espaco — o defeito que o brief descreve — e ainda estourava a altura: em
+   1366×768 o cabecalho + tres passos + a foto passavam de 100dvh, e a secao
+   deixava de assentar como as outras. Tres colunas resolvem as duas coisas:
+   a largura passa a ser usada e o bloco fica curto o bastante para caber.  */
+@media (min-width:900px){
+  .expe__passos{ grid-template-columns:repeat(3,1fr); gap:clamp(1.2rem,2.6vw,2.2rem); }
+  .monte__massas{ grid-template-columns:repeat(3,1fr); }
+
+  /* a massa vira CARTÃO: em tres colunas o nome, a descricao e o acrescimo
+     nao cabem lado a lado sem espremer a descricao a um fiapo. */
+  .monte__massa{ flex-direction:column; align-items:flex-start; gap:.35rem; }
+  .monte__massa-desc{ flex:0 1 auto; }
+  /* o cabecalho das duas telas para de ser uma coluna de leitura sozinha */
+  .expe__cabeca, .monte__cabeca{ max-width:46ch; }
+}
+
+/* ============ 24. FUNDO CLARO NAS SEÇÕES ANTIGAS ============
+   POR SEÇÃO, não por busca-e-troca. `background:#000` → creme feito às cegas
+   apagaria as telas novas (Experiência, Monte a sua, Fechamento), que já têm
+   composição própria e foram aprovadas.
+
+   O que muda aqui é só o FUNDO e o que depende dele para ter contraste:
+   abertura, a casa, cardápio, rodízio e onde fica. As telas novas ficam
+   exatamente como estavam.
+
+   O fundo é o MESMO gradiente quente das telas claras — creme/off-white,
+   nunca branco hospitalar. O dourado continua só como detalhe.             */
+.hero, .casa, .cardapio, .rodizio, .local{ color:#141518; }
+
+/* ---------- 24.1 ABERTURA ---------- */
+.tela--hero{
+  background:radial-gradient(130% 90% at 72% 6%, #FFFDF8 0%, #F8F4EB 44%, #F1E9DA 100%);
+}
+.hero__titulo{ color:#141518; }
+.hero__titulo .linha--destaque{ color:var(--vermelho); text-shadow:none; }
+.hero__sub{ color:#4A4A50; }
+.hero__fatos b{ color:#141518; }
+.hero__fatos span{ color:#6C6C72; }
+.hero__rolar{ color:#6C6C72; }
+.hero__rolar-linha{ background:linear-gradient(180deg, transparent, var(--vermelho)); }
+
+/* a pizza da abertura é um disco com alpha real: sobre o claro ela precisa de
+   sombra de contato própria, senão flutua sem peso. Halo quente bem discreto. */
+.roda__brilho{
+  background:
+    radial-gradient(circle at 50% 46%, rgba(227,167,47,.26), rgba(227,167,47,.08) 44%, transparent 68%),
+    radial-gradient(circle at 50% 50%, rgba(196,20,31,.10), transparent 66%);
+}
+.roda__foto{ filter:drop-shadow(0 26px 40px rgba(74,52,12,.28)); }
+.roda__selo{
+  background:#FFFDF8; border-color:var(--vermelho);
+  box-shadow:0 12px 28px rgba(74,52,12,.18);
+}
+.roda__selo em{ color:var(--vermelho); }
+.roda__selo span{ color:#5F5F66; }
+
+/* ---------- 24.2 A CASA, RODÍZIO E ONDE FICA ---------- */
+.tela--casa, .tela--rodizio, .tela--local{
+  background:radial-gradient(120% 82% at 18% 0%, #FFFDF8 0%, #F7F3EA 48%, #F0E8D9 100%);
+}
+.titulo{ color:#141518; }
+.texto{ color:#4A4A50; }
+.rotulo{ color:#755A11; }                  /* dourado legível sobre claro */
+.rotulo__ponto{ background:var(--vermelho); }
+.citacao, .casa__citacao{ color:#3E3E44; }
+/* o fio dourado da emenda continua valendo: e detalhe, e some no claro */
+.casa__citacao cite{ color:#6C6C72; }
+.casa__fig{ background:#EFE7D8; }
+
+.rodizio__lista li{ color:#3E3E44; }
+.rodizio__lista li::before{ background:var(--verde); box-shadow:0 0 0 3px rgba(18,129,63,.16); }
+.rodizio__obs{
+  color:#6C6C72; border-left-color:rgba(20,21,24,.20);
+}
+.rodizio__arte{ box-shadow:0 22px 50px rgba(74,52,12,.22); }
+
+.local__end{ color:#141518; }
+.local__end span{ color:#755A11; }
+.local__fone{
+  background:#FFFDF8; border-color:rgba(20,21,24,.12);
+}
+@media (hover:hover){
+  .local__fone:hover{ border-color:rgba(196,20,31,.44); background:#fff; }
+}
+.local__fone-ico{ background:rgba(18,129,63,.14); color:var(--verde); }
+.local__fone-txt small{ color:#6C6C72; }
+.local__fone-txt strong{ color:#141518; }
+.local__selo{ background:rgba(18,129,63,.12); border-color:rgba(18,129,63,.38); color:#0A5329; }
+/* o mapa estilizado era um quadrado escuro; no claro ele vira um mapa de papel */
+.local__mapa{
+  background:
+    linear-gradient(rgba(20,21,24,.05) 1px, transparent 1px) 0 0/34px 34px,
+    linear-gradient(90deg, rgba(20,21,24,.05) 1px, transparent 1px) 0 0/34px 34px,
+    radial-gradient(120% 100% at 30% 20%, #FFFDF8, #EFE7D8);
+  border-color:rgba(20,21,24,.13);
+}
+.local__mapa::before, .local__mapa::after{ background:rgba(20,21,24,.09); }
+.local__pino-ponto{ border-color:#FFFDF8; box-shadow:0 6px 16px rgba(74,52,12,.30); }
+.local__mapa-txt{ color:#141518; }
+.local__mapa-txt span{ color:#6C6C72; }
+
+/* ---------- 24.3 CARDÁPIO ---------- */
+.tela--cardapio{
+  background:radial-gradient(120% 80% at 20% 0%, #FFFDF8 0%, #F7F3EA 50%, #F0E8D9 100%);
+}
+.titulo--menor{ color:#141518; }
+
+/* filtros: pílula escura não existe no claro — o ativo é o vermelho da casa */
+.filtro{
+  border-color:rgba(20,21,24,.20); color:#4A4A50;
+}
+.filtro[aria-pressed="true"]{
+  background:var(--vermelho); border-color:var(--vermelho); color:#fff;
+}
+@media (hover:hover) and (pointer:fine){
+  .filtro:hover{ border-color:rgba(20,21,24,.46); color:#141518; }
+  .filtro[aria-pressed="true"]:hover{ color:#fff; }
+}
+
+/* o halo que separa o produto do fundo vira quente e mais fraco: sobre creme
+   o mesmo halo do preto sujaria a área em volta da pizza */
+.slide__arte::before{
+  background:radial-gradient(circle at 50% 46%,
+    rgba(227,167,47,.20), rgba(227,167,47,.07) 40%, transparent 66%);
+}
+/* sombra de contato REAL, quente e difusa. A borda do arquivo já vem com
+   alpha correto e cor do produto, então a sombra pode ser macia sem revelar
+   contorno nenhum. */
+.slide__foto{
+  filter:drop-shadow(0 22px 30px rgba(74,52,12,.26)) drop-shadow(0 0 40px rgba(227,167,47,.10));
+}
+.slide__nome{ color:#141518; }
+.slide__preco{ color:#141518; }
+.slide__preco i{ color:#6C6C72; }
+.slide__rotulo{ color:var(--vermelho); }   /* INGREDIENTES: detalhe da casa */
+.slide__desc{ color:#4A4A50; }
+.slide__tag{ background:rgba(227,167,47,.18); border-color:rgba(117,90,17,.40); color:#755A11; }
+
+.seta{
+  background:#FFFDF8; border-color:rgba(20,21,24,.22); color:#141518;
+}
+.seta[disabled]{ opacity:.34; }
+@media (hover:hover) and (pointer:fine){
+  .seta:hover{ background:#fff; border-color:rgba(20,21,24,.5); }
+}
+.ponto{ background:rgba(20,21,24,.22); }
+.ponto.esta-ativo{ background:var(--vermelho); }
+.arraste{ color:#6C6C72; }
+
+/* ---------- 24.4 TOPO, CARRINHO E MODAL ----------
+   Estes três flutuam SOBRE as seções, e agora por cima de fundo claro. Não
+   são "uma seção escura": são cromo da interface. Deixá-los pretos sobre o
+   creme daria uma tarja preta no topo e um painel preto no canto — pior que
+   o problema que estamos consertando. Eles acompanham o fundo.              */
+.topo{
+  background:linear-gradient(180deg, rgba(255,253,248,.97), rgba(255,253,248,.80) 72%, rgba(255,253,248,0));
+  border-bottom:1px solid transparent;
+}
+.topo__nome strong{ color:#141518; }
+.topo__nome small{ color:#6C6C72; }
+.topo__nav a{ color:#4A4A50; }
+.topo__nav a:hover{ color:#141518; background:rgba(20,21,24,.06); }
+.btn--pedido{
+  --bg:var(--vermelho); --fg:#fff; --bd:transparent;
+  box-shadow:0 8px 22px rgba(196,20,31,.30);
+}
+.btn__badge{ background:#fff; color:var(--vermelho); }
+.btn__badge[data-vazio="1"]{ background:rgba(20,21,24,.12); color:#6C6C72; }
+.topo__menu{
+  background:rgba(20,21,24,.05); border-color:rgba(20,21,24,.16);
+}
+.topo__menu span{ background:#141518; }
+.topo__nav-mob{
+  background:rgba(255,253,248,.97);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+}
+.topo__nav-mob a{ color:#4A4A50; border-bottom-color:rgba(20,21,24,.08); }
+.topo__nav-mob a:active{ color:#141518; }
+
+/* botões de contorno: o branco não existe sobre creme */
+.btn--contorno{ --fg:#141518; --bd:rgba(20,21,24,.28); }
+@media (hover:hover) and (pointer:fine){
+  .btn--contorno:hover{ --bd:rgba(20,21,24,.62); --bg:rgba(20,21,24,.05); }
+}
+
+/* carrinho e modal: painel claro, texto carvão */
+.carrinho{
+  background:#FFFDF8;
+  border-left:1px solid rgba(20,21,24,.12);
+  box-shadow:-24px 0 60px rgba(74,52,12,.18);
+}
+.carrinho__topo, .carrinho__rodape, .carrinho__linha{ border-color:rgba(20,21,24,.10); }
+.carrinho__titulo, .carrinho__linha strong, .carrinho__vazio{ color:#141518; }
+.item{ background:#FFFDF8; border-color:rgba(20,21,24,.10); }
+.item__nome, .item__preco{ color:#141518; }
+.item__foto{ background:rgba(20,21,24,.05); }
+.item__qtd{ background:rgba(20,21,24,.06); }
+.item__qtd button{ color:#141518; }
+.item__qtd button:hover{ background:rgba(20,21,24,.10); }
+
+.modal__veu{ background:rgba(28,22,12,.52); }
+.modal__caixa{
+  background:#FFFDF8; color:#141518;
+  border:1px solid rgba(20,21,24,.10);
+  box-shadow:0 40px 90px rgba(74,52,12,.34);
+}
+.modal__fechar{
+  background:rgba(20,21,24,.06); border-color:rgba(20,21,24,.14); color:#141518;
+}
+.modal__nome, .modal__preco{ color:#141518; }
+.modal__desc{ color:#4A4A50; }
+.modal__rotulo{ color:var(--vermelho); }
+.tamanho, .opcao, .qtd{
+  background:#fff; border-color:rgba(20,21,24,.12);
+}
+.tamanho__txt b, .opcao__nome{ color:#141518; }
+.tamanho__txt span, .opcao__desc{ color:#6C6C72; }
+.tamanho__bolha{ border-color:rgba(20,21,24,.26); }
+.tamanho[aria-pressed="true"], .opcao[aria-pressed="true"]{
+  border-color:var(--vermelho); background:rgba(196,20,31,.05);
+}
+.tamanho[aria-pressed="true"] .tamanho__bolha{ border-color:var(--vermelho); background:var(--vermelho); }
+.qtd button{ color:#141518; }
+.qtd button:hover{ background:rgba(20,21,24,.08); }
+.modal__img{ background:radial-gradient(circle at 50% 46%, rgba(227,167,47,.18), transparent 66%); }
+
+/* ============ 25. BEBIDA NÃO É PIZZA ============
+   O cardápio foi desenhado para uma pizza: um disco largo, que ocupa a área
+   toda. Uma lata é o contrário — alta, estreita e pequena. Com a mesma régua
+   a garrafa era esticada até ficar do tamanho de uma pizza, e o produto
+   deixava de ser reconhecível.
+
+   Nada de largura de pizza para bebida: uma caixa própria, estreita, centrada,
+   que usa a ALTURA disponível e para. O vizinho continua espiando.           */
+.slide--bebida .slide__arte{
+  justify-items:center;
+  padding-inline:clamp(8px,3vw,24px);
+}
+.slide--bebida .slide__foto{
+  /* teto de largura em `vh` é o que impede a lata de crescer com a tela:
+     ela escala com a ALTURA do visor, que é o que uma bebida em pé pede.   */
+  max-width:min(62%,26vh);
+  max-height:100%;
+}
+/* o halo redondo não faz sentido atrás de uma lata: vira uma faixa suave */
+.slide--bebida .slide__arte::before{
+  width:min(80%,30vh); aspect-ratio:3/4; border-radius:34%;
+  background:radial-gradient(ellipse at 50% 46%,
+    rgba(227,167,47,.18), rgba(227,167,47,.06) 44%, transparent 70%);
+}
+/* nome, preço e ingredientes numa coluna centrada, para a lata não ficar
+   com o texto empurrado para a esquerda dentro de uma área larga */
+.slide--bebida .slide__info{
+  align-items:center; justify-content:center; text-align:center;
+}
+.slide--bebida .slide__tags{ justify-content:center; }
+.slide--bebida .slide__preco{ justify-content:center; }
+.slide--bebida .slide__acoes{ width:100%; }
+
+/* ============ 26. PRODUTO E INFORMAÇÃO MAIS PERTO ============
+   Antes sobrava um vazio entre a pizza e o preço: a arte ocupava 60% da
+   largura e a informação 40%, e cada uma se alinhava pela própria caixa —
+   a pizza para um lado, o texto para o outro, com um corredor no meio.
+   Aqui as duas colunas param de ocupar os extremos: a composição vira DUAS
+   colunas próximas, centradas, com uma medida máxima. O swipe não muda: o
+   trilho, o encaixe, a largura do produto e o vão do vizinho continuam os
+   mesmos — o que muda é só o arranjo DENTRO do slide.                     */
+@media (min-width:1000px){
+  .slide{
+    padding-inline:clamp(16px,4vw,72px);
+  }
+  .slide__arte{ flex:1 1 54%; }
+  .slide__info{ flex:0 1 44%; max-width:520px; padding-left:clamp(.6rem,1.6vw,1.6rem); }
+}
+
+/* ============ 23. O FECHAMENTO NO CELULAR ============
+   O fechamento ganhou presenca (pizza grande, titulo grande, tres blocos de
+   dados) e no celular isso passou de DOIS visores — a tela deixava de ser um
+   fechamento e virava um corredor de rolagem. O que cede aqui nao e o
+   conteudo: e a DENSIDADE. A pizza continua grande, o titulo continua o maior
+   texto da tela. O que muda e o empilhamento dos tres blocos de dados, que
+   vira grade de duas colunas (o terceiro ocupa a linha inteira), e os
+   espacos entre as partes. Nada de informacao sai.                         */
+@media (max-width:599px){
+  .fim{ gap:clamp(.9rem,2.4vw,1.4rem); }
+  .fim__pizza img{ width:min(60vw,34vh); }
+  .fim__logo{ width:58px; height:58px; margin-bottom:.6rem; }
+  .fim__titulo{ font-size:clamp(2.2rem,11vw,3.4rem); }
+  .fim__sub{ margin-top:.6rem; font-size:.92rem; }
+  .fim__acoes{ margin-top:1rem; }
+  .fim__dados{
+    grid-template-columns:1fr 1fr; gap:1rem .9rem;
+    padding-top:1rem; font-size:.8rem;
+  }
+  .fim__campo:nth-child(3){ grid-column:1 / -1; }
+  .fim__campo small{ font-size:.58rem; margin-bottom:.2rem; }
+  .fim__credito{ margin-top:.3rem; font-size:.66rem; }
+}
